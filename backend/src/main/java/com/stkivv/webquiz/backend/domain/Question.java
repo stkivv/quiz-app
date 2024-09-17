@@ -1,11 +1,8 @@
 package com.stkivv.webquiz.backend.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import org.antlr.v4.runtime.misc.NotNull;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,26 +21,19 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Quiz {
+public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID quizId;
+    private UUID questionId;
 
     @ManyToOne
-    @JoinColumn(name = "user_fk", nullable = false)
-    private AppUser appUser;
+    @JoinColumn(name = "quiz_fk", nullable = false)
+    private Quiz quiz;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
-    private List<Question> questions;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+    private List<Option> options;
 
     @Column(nullable = false)
-    private String title;
-    @Column(nullable = false)
-    private String description;
-    @Column(nullable = false)
-    private boolean publicQuiz;
-    @Column(nullable = false)
-    private String passCode;
-    @Column(nullable = false)
-    private LocalDateTime lastEdit;
+    private String phrasing;
+
 }

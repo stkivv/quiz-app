@@ -1,7 +1,7 @@
 package com.stkivv.webquiz.backend.API;
 
 import com.stkivv.webquiz.backend.DTO.UserDto;
-import com.stkivv.webquiz.backend.security.CustomUserService;
+import com.stkivv.webquiz.backend.Services.CustomUserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
