@@ -30,6 +30,9 @@ public class AppUser implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "appUser")
     private List<Quiz> quizzes;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "appUser")
+    private List<RefreshToken> refreshTokens;
+
     @Column(nullable = false)
     private String username;
     @Column(nullable = false)

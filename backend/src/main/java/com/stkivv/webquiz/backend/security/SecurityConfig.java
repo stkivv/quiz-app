@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.stkivv.webquiz.backend.Services.CustomUserService;
 
@@ -19,21 +20,24 @@ import com.stkivv.webquiz.backend.Services.CustomUserService;
 public class SecurityConfig {
 
 	private final CustomUserService userDetailsService;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-	public SecurityConfig(CustomUserService userDetailsService) {
+	public SecurityConfig(CustomUserService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
 		this.userDetailsService = userDetailsService;
+		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
 	}
 
 	@Bean
 	public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable());
-		http.authorizeHttpRequests((authorize) -> authorize
-				// todo! remove /quiz from allowed paths once jwt auth is set up
-				.requestMatchers("/auth/login", "/auth/register", "/quiz/**").permitAll()
-				.anyRequest().authenticated());
-		http.sessionManagement((session) -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		return http.build();
+		return http
+				.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests((authorize) -> authorize
+						.requestMatchers("/auth/login", "/auth/register", "/auth/refresh").permitAll()
+						.anyRequest().authenticated())
+				.sessionManagement((session) -> session
+						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+				.build();
 	}
 
 	@Bean
