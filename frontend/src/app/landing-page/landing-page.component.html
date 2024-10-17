@@ -1,1 +1,14 @@
-<p>landing-page works!</p>
+<div class="landing-content-wrapper">
+  <h1>
+    Quiz App
+  </h1>
+  <p>
+    This webapp allows users to create quizzes and play them in real time
+  </p>
+  <div class="landing-btns-wrapper">
+    <app-button [btnType]="btnType" (onClickAction)="handleJoinBtnClick()" [btnLabel]="joinBtnLabel"></app-button>
+    <app-button [btnType]="btnType" (onClickAction)="handleLoginBtnClick()" [btnLabel]="loginBtnLabel"></app-button>
+    <app-button [btnType]="btnType" (onClickAction)="handleRegisterButtonClick()"
+      [btnLabel]="registerBtnLabel"></app-button>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+.landing-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .landing-btns-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
