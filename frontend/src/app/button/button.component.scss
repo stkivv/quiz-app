@@ -1,15 +1,23 @@
 .button {
   padding: 20px;
-  border-radius: 14px;
-  border: 0px solid transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
   font-weight: bold;
   margin: 10px;
+  background-color: #20243b;
+  transition: all 0.1s ease-out;
+
+  &:hover {
+    cursor: pointer;
+    filter: brightness(1.2);
+  }
 }
 
 .confirm-btn {
-  color: white;
-  background-color: #1155c2;
+  color: #20243b;
+  background-color: #d49f3d;
 }
+
 .cancel-btn {
   color: white;
   background-color: gray;
@@ -17,6 +25,9 @@
 
 .menu-btn {
   color: white;
-  background-color: #ad456c;
-  width: 200px;
+  width: 300px;
+
+  &:hover {
+    border:1px solid #d49f3d;
+  }
 }

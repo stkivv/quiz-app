@@ -3,8 +3,15 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: white;
+  height: 100vh;
+
+  h1 {
+    font-size: 46px;
+  }
 
   .landing-btns-wrapper {
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
