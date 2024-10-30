@@ -1,0 +1,28 @@
+.register-page {
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &__inputs {
+    width: 300px;
+    align-self: center;
+    margin-bottom: 10px;
+  }
+
+  &__buttons {
+    width: 300px;
+    display: flex;
+    justify-content: space-evenly;
+    align-self: center;
+
+    app-button {
+      width: 100%;
+    }
+  }
+
+  h1 {
+    text-align: center;
+  }
+}
