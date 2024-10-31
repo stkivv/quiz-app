@@ -6,7 +6,7 @@ import { EButtonType } from './EButtonType';
   standalone: true,
   imports: [],
   templateUrl: './button.component.html',
-  styleUrl: './button.component.scss',
+  styleUrl: './button.component.css',
 })
 export class ButtonComponent {
   @Input() btnType: EButtonType = EButtonType.CONFIRM;

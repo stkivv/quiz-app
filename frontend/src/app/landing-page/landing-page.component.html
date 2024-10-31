@@ -1,14 +1,15 @@
-<div class="landing-content-wrapper">
-  <h1>
-    QUIZ APP
-  </h1>
-  <p>
-    Create quizzes and play them in real time!
-  </p>
-  <div class="landing-btns-wrapper">
-    <app-button [btnType]="btnType" (onClickAction)="handleJoinBtnClick()" [btnLabel]="joinBtnLabel"></app-button>
-    <app-button [btnType]="btnType" (onClickAction)="handleLoginBtnClick()" [btnLabel]="loginBtnLabel"></app-button>
-    <app-button [btnType]="btnType" (onClickAction)="handleRegisterButtonClick()"
-      [btnLabel]="registerBtnLabel"></app-button>
+<div class="h-screen flex flex-col items-center justify-center">
+  <div class="bg-yellow-50 min-w-96 text-center rounded-2xl p-5">
+    <h1 class="text-black font-bold text-4xl">
+      QUIZ APP
+    </h1>
+    <p class="text-black text-lg m-3">
+      Create quizzes and play them in real time!
+    </p>
+    <div class="flex flex-col">
+      <app-button [btnType]="btnType" (onClickAction)="handleJoinBtnClick()" [btnLabel]="joinBtnLabel" />
+      <app-button [btnType]="btnType" (onClickAction)="handleLoginBtnClick()" [btnLabel]="loginBtnLabel" />
+      <app-button [btnType]="btnType" (onClickAction)="handleRegisterButtonClick()" [btnLabel]="registerBtnLabel" />
+    </div>
   </div>
 </div>

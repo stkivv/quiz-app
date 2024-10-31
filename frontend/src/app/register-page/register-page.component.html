@@ -1,12 +1,14 @@
-<div class="register-page">
-  <h1>Sign up</h1>
-  <div class="register-page__inputs">
-    <app-form-input placeholder='Username' [formControl]="username"></app-form-input>
-    <app-form-input placeholder='Password' [formControl]="password"></app-form-input>
-    <app-form-input placeholder='Confirm password' [formControl]="confirmPassword"></app-form-input>
-  </div>
-  <div class="register-page__buttons">
-    <app-button [btnType]='cancelBtnType' [btnLabel]='cancelBtnLabel' (click)='handleCancelClick()'></app-button>
-    <app-button [btnType]='submitBtnType' [btnLabel]='submitBtnLabel' (click)='submitForm()'></app-button>
+<div class="h-screen flex flex-col items-center justify-center">
+  <div class="bg-yellow-50 text-center rounded-2xl p-5 min-w-96">
+    <h1 class="text-black font-bold text-4xl m-10">SIGN UP</h1>
+    <div class="flex flex-col">
+      <app-form-input placeholder='Username' [formControl]="username"></app-form-input>
+      <app-form-input placeholder='Password' [formControl]="password"></app-form-input>
+      <app-form-input placeholder='Confirm password' [formControl]="confirmPassword"></app-form-input>
+    </div>
+    <div class="flex flex-col">
+      <app-button [btnType]='submitBtnType' [btnLabel]='submitBtnLabel' (click)='submitForm()' />
+      <app-button [btnType]='cancelBtnType' [btnLabel]='cancelBtnLabel' (click)='handleCancelClick()' />
+    </div>
   </div>
 </div>

@@ -7,7 +7,7 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
   standalone: true,
   imports: [RouterOutlet, LandingPageComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'frontend';

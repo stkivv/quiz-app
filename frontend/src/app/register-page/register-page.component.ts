@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [FormInputComponent, ButtonComponent],
   templateUrl: './register-page.component.html',
-  styleUrl: './register-page.component.scss'
+  styleUrl: './register-page.component.css'
 })
 export class RegisterPageComponent {
   constructor(private http: HttpClient, private router: Router) { }
