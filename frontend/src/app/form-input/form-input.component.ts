@@ -11,4 +11,5 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 export class FormInputComponent {
   @Input() placeholder = '';
   @Input() formControl = new FormControl('');
+  @Input() inputType = '';
 }

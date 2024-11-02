@@ -21,6 +21,7 @@ export class LandingPageComponent {
 
   loginBtnLabel: string = 'Log in';
   handleLoginBtnClick() {
+    this.router.navigate(['login'])
   }
 
   registerBtnLabel: string = 'Sign up';

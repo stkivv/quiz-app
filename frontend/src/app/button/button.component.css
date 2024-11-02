@@ -2,10 +2,22 @@
   background-color: #4287f5;
 }
 
+.confirm-btn:hover {
+  background-color: #3899ff;
+}
+
 .cancel-btn {
   background-color: gray;
 }
 
+.cancel-btn:hover {
+  background-color: darkgray;
+}
+
 .menu-btn {
   background-color: orange;
+}
+
+.menu-btn:hover {
+  background-color: #ff9808;
 }

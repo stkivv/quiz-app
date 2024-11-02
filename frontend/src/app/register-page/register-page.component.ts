@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
 import { userDto } from '../dtos/user-dto';
 import { FormInputComponent } from '../form-input/form-input.component';
 import { ButtonComponent } from '../button/button.component';
 import { EButtonType } from '../button/EButtonType';
 import { Router } from '@angular/router';
+import { BackendService } from '../backend.service';
 
 @Component({
   selector: 'app-register-page',
@@ -16,7 +15,7 @@ import { Router } from '@angular/router';
   styleUrl: './register-page.component.css'
 })
 export class RegisterPageComponent {
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private backendService: BackendService, private router: Router) { }
 
   username = new FormControl('');
   password = new FormControl('');
@@ -36,23 +35,20 @@ export class RegisterPageComponent {
       this.password.value !== this.confirmPassword.value) return;
     if (!this.username.value) return;
 
-    const url = environment.apiUrl + "auth/register"
+    const url = "auth/register"
     const user: userDto = {
       username: this.username.value,
       password: this.password.value
     }
 
-    this.doPost(url, user)
-  }
-
-  private doPost(url: string, user: userDto) {
-    this.http.post(url, user, { responseType: "text" }).subscribe({
+    this.backendService.doPost(url, user).subscribe({
       next: (response: any) => {
-        console.log(response)
+        console.log(response);
       },
       error: (error: any) => {
-        console.error(error)
+        console.error("Error: ", error)
       }
     })
   }
+
 }
