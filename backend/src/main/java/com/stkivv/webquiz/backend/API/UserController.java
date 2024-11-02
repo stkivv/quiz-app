@@ -6,6 +6,9 @@ import com.stkivv.webquiz.backend.Services.CustomUserService;
 import com.stkivv.webquiz.backend.Services.RefreshTokenService;
 import com.stkivv.webquiz.backend.security.JwtUtilities;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,28 +49,46 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<JWTResponseDto> loginUser(@RequestBody UserDto user) {
+	public ResponseEntity<String> loginUser(@RequestBody UserDto user, HttpServletResponse response) {
 		Authentication auth = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+
 		if (auth.isAuthenticated()) {
 			String token = jwtUtilities.createToken(user.getUsername());
 			String refreshToken = refreshTokenService.createRefreshTokenForUser(user.getUsername());
-			JWTResponseDto res = new JWTResponseDto();
-			res.setJwt(token);
-			res.setRefreshToken(refreshToken);
-			return ResponseEntity.ok(res);
+
+			Cookie accessTokenCookie = new Cookie("accessToken", token);
+			accessTokenCookie.setHttpOnly(true);
+			accessTokenCookie.setPath("/");
+
+			Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+			refreshTokenCookie.setHttpOnly(true);
+			refreshTokenCookie.setPath("/");
+
+			response.addCookie(accessTokenCookie);
+			response.addCookie(refreshTokenCookie);
+			return ResponseEntity.ok("login successful");
 		} else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("login failed");
 		}
 	}
 
 	@PostMapping("/refresh")
-	public ResponseEntity<String> getNewToken(@RequestParam String username, @RequestParam String refreshToken) {
+	public ResponseEntity<String> getNewToken(@RequestParam String username,
+			@CookieValue(name = "refreshToken") String refreshToken,
+			HttpServletResponse response) {
 		if (refreshTokenService.isRefreshTokenValid(username, refreshToken)) {
 			String jwt = jwtUtilities.createToken(username);
-			return ResponseEntity.ok(jwt);
+
+			Cookie accessTokenCookie = new Cookie("accessToken", jwt);
+			accessTokenCookie.setHttpOnly(true);
+			accessTokenCookie.setPath("/");
+
+			response.addCookie(accessTokenCookie);
+
+			return ResponseEntity.ok("token refresh succesful");
 		} else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid refresh token");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token refresh failed");
 		}
 	}
 

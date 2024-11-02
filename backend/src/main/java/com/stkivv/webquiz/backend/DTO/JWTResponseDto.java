@@ -1,9 +1,10 @@
 package com.stkivv.webquiz.backend.DTO;
 
+import jakarta.servlet.http.Cookie;
 import lombok.Data;
 
 @Data
 public class JWTResponseDto {
-   String jwt;
-   String refreshToken; 
+	Cookie jwt;
+	Cookie refreshToken;
 }

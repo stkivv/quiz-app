@@ -41,7 +41,7 @@ export class RegisterPageComponent {
       password: this.password.value
     }
 
-    this.backendService.doPost(url, user).subscribe({
+    this.backendService.doPost(url, user, "text").subscribe({
       next: (response: any) => {
         console.log(response);
       },

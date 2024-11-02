@@ -6,7 +6,6 @@ import { FormInputComponent } from '../form-input/form-input.component';
 import { ButtonComponent } from '../button/button.component';
 import { BackendService } from '../backend.service';
 import { userDto } from '../dtos/user-dto';
-import { JwtResponse } from './JwtResponse';
 
 @Component({
   selector: 'app-login-page',
@@ -37,9 +36,9 @@ export class LoginPageComponent {
       username: this.username.value,
       password: this.password.value
     }
-    this.backendService.doPost<JwtResponse>(url, user).subscribe({
-      next: (response: JwtResponse) => {
-
+    this.backendService.doPost<string>(url, user, "text").subscribe({
+      next: (response: string) => {
+        console.log(response)
       },
       error: (error: any) => {
         console.error("Error: ", error)
