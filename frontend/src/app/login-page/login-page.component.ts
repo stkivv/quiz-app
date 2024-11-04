@@ -39,6 +39,7 @@ export class LoginPageComponent {
     this.backendService.doPost<string>(url, user, "text").subscribe({
       next: (response: string) => {
         console.log(response)
+        this.router.navigate(['dashboard'])
       },
       error: (error: any) => {
         console.error("Error: ", error)

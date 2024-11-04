@@ -7,9 +7,12 @@
       Create quizzes and play them in real time!
     </p>
     <div class="flex flex-col">
-      <app-button [btnType]="btnType" (onClickAction)="handleJoinBtnClick()" [btnLabel]="joinBtnLabel" />
-      <app-button [btnType]="btnType" (onClickAction)="handleLoginBtnClick()" [btnLabel]="loginBtnLabel" />
-      <app-button [btnType]="btnType" (onClickAction)="handleRegisterButtonClick()" [btnLabel]="registerBtnLabel" />
+      <app-button class="my-1 min-h-12" [btnType]="btnType" (onClickAction)="handleJoinBtnClick()"
+        [btnLabel]="joinBtnLabel" />
+      <app-button class="my-1 min-h-12" [btnType]="btnType" (onClickAction)="handleLoginBtnClick()"
+        [btnLabel]="loginBtnLabel" />
+      <app-button class="my-1 min-h-12" [btnType]="btnType" (onClickAction)="handleRegisterButtonClick()"
+        [btnLabel]="registerBtnLabel" />
     </div>
   </div>
 </div>

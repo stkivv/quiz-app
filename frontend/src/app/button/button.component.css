@@ -21,3 +21,19 @@
 .menu-btn:hover {
   background-color: #ff9808;
 }
+
+.danger-btn {
+  background-color: #d92b2b;
+}
+
+.danger-btn:hover {
+  background-color: #f22e2e;
+}
+
+.neutral-btn {
+  background-color: #25b32d;
+}
+
+.neutral-btn:hover {
+  background-color: #2bd934;
+}

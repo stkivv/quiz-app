@@ -1,0 +1,26 @@
+<div class="h-screen flex flex-col items-center p-5">
+  <div class="bg-yellow-50 flex flex-col text-center rounded-2xl p-5 w-full h-full divide-y divide-black">
+    <div class="flex min-h-16">
+      <div class="text-black text-left font-bold text-4xl m-1 size-fit flex-grow">Dashboard</div>
+      <div class="my-2 w-20">
+        <app-button [btnType]="logOutBtnType" [btnLabel]="logOutBtnLabel" (click)='handleLogOut()' />
+      </div>
+    </div>
+    <div class="overflow-y-scroll h-full">
+      <div class="flex my-4 flex-col">
+        <app-button class="w-36 mb-2 h-10" [btnType]="newQuizBtnType" [btnLabel]="newQuizBtnLabel"
+          (click)='handleNewQuiz()' />
+        <div class="bg-white p-4 flex my-1 w-full  border-amber-500 border rounded ">
+          <div class="flex flex-col flex-grow">
+            <div class="text-sm text-left font-bold">Example quiz 1</div>
+            <div class="text-sm text-left text-gray-600">Last edited: 00:00 4-11-2024</div>
+          </div>
+          <app-button class="ml-4 w-20" [btnType]="playBtnType" [btnLabel]="playBtnLabel" (click)="handlePlayQuiz()" />
+          <app-button class="ml-4 w-20" [btnType]="editBtnType" [btnLabel]="editBtnLabel" (click)="handleEditQuiz()" />
+          <app-button class="ml-4 w-20" [btnType]="deleteBtnType" [btnLabel]="deleteBtnLabel"
+            (click)="handleDeleteQuiz()" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
