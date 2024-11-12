@@ -3,8 +3,7 @@ import { ButtonComponent } from '../button/button.component';
 import { EButtonType } from '../button/EButtonType';
 import { Question } from '../dtos/question-dto';
 import { FormInputComponent } from '../form-input/form-input.component';
-import { FormControl } from '@angular/forms';
-import { Option } from '../dtos/option-dto';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-add-question-modal',
@@ -21,26 +20,19 @@ export class AddQuestionModalComponent {
   alphabet: string[] = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
   phrasing = new FormControl("");
-  options: Option[] = [{ phrasing: "example", correctAnswer: false }];
+  options = new FormArray([] as FormGroup[]);
   handleAddOption() {
-    this.options.push({ phrasing: '', correctAnswer: false });
+    const ctrl = new FormGroup({ phrasing: new FormControl(""), correctAnswer: new FormControl(false) });
+    this.options.push(ctrl);
   }
-  deleteOptionBtnType = EButtonType.DANGER;
-  deleteOptionBtnLabel = "X"
-  handleDeleteOption(index: number) {
-    this.options.splice(index, 1);
-  }
-  handleToggleOptionCorrect(index: number) {
-    this.options[index].correctAnswer = !this.options[index].correctAnswer;
-  }
-
-  cancelBtnType = EButtonType.CANCEL;
-  cancelBtnLabel = "Cancel";
-  closeModal() {
-    this.phrasing = new FormControl("");
-    this.options = [];
-    this.isVisible = false;
-    this.close.emit();
+  getPhrasingControl(option: FormGroup) {
+    const phrasingControl = option.get('phrasing');
+    if (phrasingControl instanceof FormControl) {
+      return phrasingControl;
+    } else {
+      console.error("formGroup has the wrong format");
+      return;
+    }
   }
 
   addBtnType = EButtonType.CONFIRM;
@@ -49,10 +41,28 @@ export class AddQuestionModalComponent {
     if (!this.phrasing.value || this.options.length < 2) return;
     const question: Question = {
       phrasing: this.phrasing.value,
-      options: this.options
+      options: this.options.value
     }
     this.add.emit(question);
     this.closeModal();
   }
 
+  cancelBtnType = EButtonType.CANCEL;
+  cancelBtnLabel = "Cancel";
+  closeModal() {
+    this.phrasing = new FormControl("");
+    this.options = new FormArray([] as FormGroup[]);
+    this.isVisible = false;
+    this.close.emit();
+  }
+
+  deleteOptionBtnType = EButtonType.DANGER;
+  deleteOptionBtnLabel = "X"
+  handleDeleteOption(index: number) {
+    this.options.removeAt(index);
+  }
+
+  handleToggleOptionCorrect(index: number) {
+    this.options.value[index].correctAnswer = !this.options.value[index].correctAnswer;
+  }
 }

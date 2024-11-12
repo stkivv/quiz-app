@@ -4,11 +4,16 @@ import { EButtonType } from '../button/EButtonType';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AddQuestionModalComponent } from '../add-question-modal/add-question-modal.component';
 import { Question } from '../dtos/question-dto';
+import { BackendService } from '../backend.service';
+import { Quiz } from '../dtos/quiz-dto';
+import { HttpParams } from '@angular/common/http';
+import { FormControl } from '@angular/forms';
+import { FormInputComponent } from '../form-input/form-input.component';
 
 @Component({
   selector: 'app-create-quiz',
   standalone: true,
-  imports: [ButtonComponent, AddQuestionModalComponent],
+  imports: [ButtonComponent, AddQuestionModalComponent, FormInputComponent],
   templateUrl: './create-quiz.component.html',
   styleUrl: './create-quiz.component.css'
 })
@@ -17,33 +22,48 @@ export class CreateQuizComponent {
   questions: Question[] = [];
   alphabet: string[] = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
-  constructor(private router: Router, private route: ActivatedRoute) { }
+  constructor(private router: Router, private route: ActivatedRoute, private backendService: BackendService) { }
 
   ngOnInit() {
     this.username = this.route.snapshot.paramMap.get('username')!;
-    const example: Question = {
-      phrasing: "What color is the sky?",
-      options: [
-        { phrasing: "red", correctAnswer: false },
-        { phrasing: "blue", correctAnswer: true },
-        { phrasing: "magenta", correctAnswer: false },
-        { phrasing: "green", correctAnswer: false }
-      ]
-    };
-    this.questions.push(example);
   }
 
+  title = new FormControl("");
+  description = new FormControl("");
 
   addQuestionBtnType = EButtonType.CONFIRM;
   addQuestionLabel = "Add new question +"
-  showQuestionModal = true;
+  showQuestionModal = false;
   addQuestion(question: Question) {
     this.questions.push(question);
   }
 
   saveQuizBtnType = EButtonType.CONFIRM;
   saveQuizLabel = "Save";
-  handleSaveQuiz() { }
+  submitForm() {
+    if (this.questions.length < 1) return;
+    const url = "quiz";
+    const quiz: Quiz = {
+      title: this.title.value ? this.title.value : "Untitled",
+      description: this.description.value ? this.description.value : "No description",
+      publicQuiz: false,
+      passCode: undefined,
+      lastEdit: undefined,
+      questions: this.questions
+    }
+
+    const params = new HttpParams().set('username', this.username);
+
+    this.backendService.doPost<string>(url, quiz, "text", params).subscribe({
+      next: (response: string) => {
+        console.log(response)
+        this.router.navigate([`${this.username}/dashboard`]);
+      },
+      error: (error: any) => {
+        console.error("Error: ", error)
+      }
+    });
+  }
 
   cancelBtnType = EButtonType.CANCEL;
   cancelBtnLabel = "Cancel";

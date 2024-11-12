@@ -4,7 +4,7 @@ export interface Quiz {
   title: string,
   description: string,
   publicQuiz: boolean,
-  passCode: string,
-  lastEdit: Date,
+  passCode: string | undefined,
+  lastEdit: Date | undefined,
   questions: Question[]
 }

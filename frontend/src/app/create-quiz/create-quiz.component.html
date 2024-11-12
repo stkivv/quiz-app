@@ -1,11 +1,12 @@
 <div class="h-screen flex flex-col items-center p-5">
   <div class="bg-yellow-50 flex flex-col text-center rounded-2xl p-5 w-full h-full">
     <div class="flex min-h-16 content-center">
-      <div class="text-black text-left font-bold text-4xl m-1 size-fit">Quiz title</div>
+      <app-form-input class="font-bold flex-grow" placeholder="Add a title..." [formControl]="title" />
       <div class="ml-4 w-44 h-12">
         <app-button [btnType]="addQuestionBtnType" [btnLabel]="addQuestionLabel" (click)="showQuestionModal = true" />
       </div>
     </div>
+    <app-form-input placeholder="Add description here..." [formControl]="description" />
     <app-add-question-modal [isVisible]="showQuestionModal" (close)="showQuestionModal = false"
       (add)="addQuestion($event)" />
     <div class=" my-2 w-full h-full overflow-scroll rounded">
@@ -24,12 +25,12 @@
         </div>
       </div>
       } @empty {
-      <p>No questions added</p>
+      <p class="flex p-16 justify-center align-center">No questions added</p>
       }
     </div>
     <div class="flex flex-row-reverse h-16 mt-auto p-1">
       <div class="w-20 ml-2">
-        <app-button [btnType]="saveQuizBtnType" [btnLabel]="saveQuizLabel" (click)="handleSaveQuiz()" />
+        <app-button [btnType]="saveQuizBtnType" [btnLabel]="saveQuizLabel" (click)="submitForm()" />
       </div>
       <div class="w-20">
         <app-button [btnType]="cancelBtnType" [btnLabel]="cancelBtnLabel" (click)="handleCancel()" />
