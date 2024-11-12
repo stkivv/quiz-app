@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 import { EButtonType } from '../button/EButtonType';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +11,13 @@ import { Router } from '@angular/router';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
-  constructor(private router: Router) { }
+  username: string = "";
+
+  constructor(private router: Router, private route: ActivatedRoute) { }
+
+  ngOnInit() {
+    this.username = this.route.snapshot.paramMap.get('username')!;
+  }
 
   logOutBtnType = EButtonType.MENU;
   logOutBtnLabel = "Log out";
@@ -21,6 +27,7 @@ export class DashboardComponent {
   newQuizBtnType = EButtonType.CONFIRM;
   newQuizBtnLabel = "Create new";
   handleNewQuiz() {
+    this.router.navigate([`${this.username}/create`]);
   }
 
   playBtnType = EButtonType.CONFIRM;

@@ -1,0 +1,39 @@
+@if (isVisible) {
+<div class="fixed inset-0 flex overflow-scroll items-center justify-center bg-black bg-opacity-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+    <h2 class="text-xl font-semibold mb-4">Add new question</h2>
+    <app-form-input placeholder="Write your question here" [formControl]="phrasing" />
+    <p class="font-semibold flex">Answers: </p>
+    @for(option of options; track option; let i = $index) {
+    <div class="flex items-center">
+      <p class="mr-4 mb-2">{{alphabet[i] + ")"}}</p>
+      <app-form-input class="flex-grow" />
+      @if (option.correctAnswer) {
+      <div class="bg-green-600 text-white hover:cursor-pointer hover:bg-green-500 p-1 mb-2 ml-2 w-20 rounded"
+        (click)="handleToggleOptionCorrect(i)">
+        Correct</div>
+      } @else {
+      <div class="bg-red-600 text-white hover:cursor-pointer hover:bg-red-500 p-1 mb-2 ml-2 w-20 rounded"
+        (click)="handleToggleOptionCorrect(i)">
+        Wrong</div>
+      }
+      <div class="w-6 h-8 pb-2 ml-2">
+        <app-button (click)="handleDeleteOption(i)" [btnType]="deleteOptionBtnType" [btnLabel]="deleteOptionBtnLabel" />
+      </div>
+    </div>
+    }
+    <button class="flex bg-amber-400 hover:bg-amber-500 font-semibold rounded text-sm p-2 w-full my-2"
+      (click)="handleAddOption()">Add new answer
+      option
+      +</button>
+    <div class="flex flex-row-reverse h-12 mt-auto p-1">
+      <div class="w-20 ml-2">
+        <app-button [btnType]="addBtnType" [btnLabel]="addBtnLabel" (click)="handleAdd()" />
+      </div>
+      <div class="w-20">
+        <app-button [btnType]="cancelBtnType" [btnLabel]="cancelBtnLabel" (click)="closeModal()" />
+      </div>
+    </div>
+  </div>
+</div>
+}

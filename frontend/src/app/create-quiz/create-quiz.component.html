@@ -3,20 +3,29 @@
     <div class="flex min-h-16 content-center">
       <div class="text-black text-left font-bold text-4xl m-1 size-fit">Quiz title</div>
       <div class="ml-4 w-44 h-12">
-        <app-button [btnType]="addQuestionBtnType" [btnLabel]="addQuestionLabel" (click)="handleAddQuestion()" />
+        <app-button [btnType]="addQuestionBtnType" [btnLabel]="addQuestionLabel" (click)="showQuestionModal = true" />
       </div>
     </div>
-    <div class="my-2 w-full h-full overflow-scroll rounded">
+    <app-add-question-modal [isVisible]="showQuestionModal" (close)="showQuestionModal = false"
+      (add)="addQuestion($event)" />
+    <div class=" my-2 w-full h-full overflow-scroll rounded">
       <div class="text-left font-bold my-2">Questions:</div>
+      @for (question of questions; track question; let i = $index) {
       <div class="text-left border border-black content-center p-4 h-28 bg-white rounded my-2">
-        <div class="font-bold">1. What color is the sky?</div>
+        <div class="font-bold">{{i + 1 + ". " + question.phrasing}}</div>
         <div class="flex py-4">
-          <div class="px-4 py-1">a) red</div>
-          <div class="px-4 py-1 rounded bg-green-600 text-white">b) blue</div>
-          <div class="px-4 py-1">c) magenta</div>
-          <div class="px-4 py-1">d) neon green</div>
+          @for (option of question.options; track option; let j = $index) {
+          @if(option.correctAnswer) {
+          <div class="px-4 py-1 rounded bg-green-600 text-white">{{alphabet[j] + ") " + option.phrasing}}</div>
+          } @else {
+          <div class="px-4 py-1">{{alphabet[j] + ") " + option.phrasing}}</div>
+          }
+          }
         </div>
       </div>
+      } @empty {
+      <p>No questions added</p>
+      }
     </div>
     <div class="flex flex-row-reverse h-16 mt-auto p-1">
       <div class="w-20 ml-2">
