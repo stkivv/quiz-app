@@ -6,7 +6,6 @@ import { AddQuestionModalComponent } from '../add-question-modal/add-question-mo
 import { Question } from '../dtos/question-dto';
 import { BackendService } from '../backend.service';
 import { Quiz } from '../dtos/quiz-dto';
-import { HttpParams } from '@angular/common/http';
 import { FormControl } from '@angular/forms';
 import { FormInputComponent } from '../form-input/form-input.component';
 
@@ -47,14 +46,12 @@ export class CreateQuizComponent {
       title: this.title.value ? this.title.value : "Untitled",
       description: this.description.value ? this.description.value : "No description",
       publicQuiz: false,
-      passCode: undefined,
-      lastEdit: undefined,
+      passCode: "123ABC",
+      lastEdit: new Date(),
       questions: this.questions
     }
 
-    const params = new HttpParams().set('username', this.username);
-
-    this.backendService.doPost<string>(url, quiz, "text", params).subscribe({
+    this.backendService.doPost<string>(url, quiz, "text").subscribe({
       next: (response: string) => {
         console.log(response)
         this.router.navigate([`${this.username}/dashboard`]);

@@ -74,9 +74,10 @@ public class UserController {
 	}
 
 	@PostMapping("/refresh")
-	public ResponseEntity<String> getNewToken(@RequestParam String username,
+	public ResponseEntity<String> getNewToken(@CookieValue(name = "accessToken") String accessToken,
 			@CookieValue(name = "refreshToken") String refreshToken,
 			HttpServletResponse response) {
+		String username = jwtUtilities.extractUsername(accessToken);
 		if (refreshTokenService.isRefreshTokenValid(username, refreshToken)) {
 			String jwt = jwtUtilities.createToken(username);
 

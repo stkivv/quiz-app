@@ -1,10 +1,11 @@
 import { Question } from "./question-dto";
 
 export interface Quiz {
+  id?: string,
   title: string,
   description: string,
   publicQuiz: boolean,
-  passCode: string | undefined,
-  lastEdit: Date | undefined,
+  passCode?: string,
+  lastEdit?: Date,
   questions: Question[]
 }
