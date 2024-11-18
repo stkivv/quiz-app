@@ -26,7 +26,6 @@ export class DashboardComponent {
   getQuizzes() {
     const url = "quiz";
     this.backendService.doGet<Quiz[]>(url, 'json').subscribe(quizzes => {
-      console.log(quizzes);
       this.quizzes = quizzes;
     });
   }
@@ -49,7 +48,8 @@ export class DashboardComponent {
 
   editBtnType = EButtonType.NEUTRAL;
   editBtnLabel = "Edit"
-  handleEditQuiz() {
+  handleEditQuiz(quiz: Quiz) {
+    this.router.navigate([`${this.username}/create/${quiz.id}`])
   }
 
   deleteBtnType = EButtonType.DANGER;

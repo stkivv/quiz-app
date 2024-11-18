@@ -19,7 +19,8 @@
             <div class="text-xs text-left text-gray-600">Last edited: {{quiz.lastEdit}}</div>
           </div>
           <app-button class="ml-4 w-20" [btnType]="playBtnType" [btnLabel]="playBtnLabel" (click)="handlePlayQuiz()" />
-          <app-button class="ml-4 w-20" [btnType]="editBtnType" [btnLabel]="editBtnLabel" (click)="handleEditQuiz()" />
+          <app-button class="ml-4 w-20" [btnType]="editBtnType" [btnLabel]="editBtnLabel"
+            (click)="handleEditQuiz(quiz)" />
           <app-button class="ml-4 w-20" [btnType]="deleteBtnType" [btnLabel]="deleteBtnLabel"
             (click)="handleDeleteQuiz(quiz)" />
         </div>

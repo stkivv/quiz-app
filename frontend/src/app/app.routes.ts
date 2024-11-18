@@ -10,6 +10,11 @@ export const routes: Routes = [
   { path: 'register', component: RegisterPageComponent },
   { path: 'login', component: LoginPageComponent },
   { path: ':username/dashboard', component: DashboardComponent },
-  { path: ':username/create', component: CreateQuizComponent },
+  {
+    path: ':username/create', component: CreateQuizComponent, children: [
+
+      { path: ':quizid', component: CreateQuizComponent }
+    ]
+  },
 ];
 
