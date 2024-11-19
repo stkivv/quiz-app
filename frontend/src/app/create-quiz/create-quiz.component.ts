@@ -18,17 +18,38 @@ import { FormInputComponent } from '../form-input/form-input.component';
 })
 export class CreateQuizComponent {
   username: string = "";
+  quizId: string | null = null;
   questions: Question[] = [];
   alphabet: string[] = 'abcdefghijklmnopqrstuvwxyz'.split('');
+  title = new FormControl("");
+  description = new FormControl("");
 
   constructor(private router: Router, private route: ActivatedRoute, private backendService: BackendService) { }
 
   ngOnInit() {
     this.username = this.route.snapshot.paramMap.get('username')!;
+    const id = this.route.firstChild?.snapshot.paramMap.get('quizid');
+    if (id) {
+      const url = "quiz/" + id;
+      this.backendService.doGet<Quiz>(url, 'json').subscribe(quiz => {
+        this.quizId = quiz.id!;
+        this.title = new FormControl(quiz.title);
+        this.description = new FormControl(quiz.description);
+        this.questions = quiz.questions;
+      });
+    }
   }
 
-  title = new FormControl("");
-  description = new FormControl("");
+  moveQuestion(index: number, direction: 'forward' | 'back') {
+    if (direction === 'back' && index === this.questions.length - 1
+      || direction === 'forward' && index === 0) return;
+
+    const value = this.questions[index]
+    const swapIndex = direction === 'forward' ? index - 1 : index + 1;
+    const swapValue = this.questions[swapIndex];
+    this.questions[index] = swapValue;
+    this.questions[swapIndex] = value;
+  }
 
   addQuestionBtnType = EButtonType.CONFIRM;
   addQuestionLabel = "Add new question +"
@@ -43,10 +64,11 @@ export class CreateQuizComponent {
     if (this.questions.length < 1) return;
     const url = "quiz";
     const quiz: Quiz = {
+      id: this.quizId ? this.quizId : "",
       title: this.title.value ? this.title.value : "Untitled",
       description: this.description.value ? this.description.value : "No description",
       publicQuiz: false,
-      passCode: "123ABC",
+      passCode: "",
       lastEdit: new Date(),
       questions: this.questions
     }
