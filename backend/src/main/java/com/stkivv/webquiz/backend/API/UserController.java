@@ -1,6 +1,5 @@
 package com.stkivv.webquiz.backend.API;
 
-import com.stkivv.webquiz.backend.DTO.JWTResponseDto;
 import com.stkivv.webquiz.backend.DTO.UserDto;
 import com.stkivv.webquiz.backend.Services.CustomUserService;
 import com.stkivv.webquiz.backend.Services.RefreshTokenService;
