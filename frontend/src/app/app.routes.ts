@@ -4,6 +4,7 @@ import { RegisterPageComponent } from './register-page/register-page.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CreateQuizComponent } from './create-quiz/create-quiz.component';
+import { GameLobbyComponent } from './game-lobby/game-lobby.component';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -16,5 +17,10 @@ export const routes: Routes = [
       { path: ':quizid', component: CreateQuizComponent }
     ]
   },
+  {
+    path: ':username/lobby', component: GameLobbyComponent, children: [
+      { path: ':quizid', component: GameLobbyComponent }
+    ]
+  }
 ];
 

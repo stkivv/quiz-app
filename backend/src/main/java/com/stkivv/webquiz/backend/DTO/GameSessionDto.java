@@ -10,6 +10,7 @@ public class GameSessionDto {
 	private Integer currentQuestionIndex = 0;
 	private Integer highestQuestionsIndex;
 	private List<PlayerDto> players;
+	private boolean inProgress = false;
 
 	public void setQuestions(List<QuestionDto> questions) {
 		this.questions = questions;

@@ -8,9 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import com.stkivv.webquiz.backend.DTO.AnswerDto;
 import com.stkivv.webquiz.backend.DTO.GameSessionDto;
@@ -18,25 +18,21 @@ import com.stkivv.webquiz.backend.DTO.PlayerDto;
 import com.stkivv.webquiz.backend.DTO.QuestionDto;
 import com.stkivv.webquiz.backend.DTO.QuizDto;
 import com.stkivv.webquiz.backend.Services.QuizService;
-import com.stkivv.webquiz.backend.security.JwtUtilities;
 
 @Controller
 public class GameController {
 
 	private final QuizService quizService;
-	private final JwtUtilities jwtUtilities;
 
-	public GameController(QuizService quizService, JwtUtilities jwtUtilities) {
+	public GameController(QuizService quizService) {
 		this.quizService = quizService;
-		this.jwtUtilities = jwtUtilities;
 	}
 
 	private Map<String, GameSessionDto> gameSessions = new ConcurrentHashMap<>();
 
-	@MessageMapping("/app/{quizId}/host")
-	@SendTo("/game/{quizId}/host")
-	public String hostGame(@DestinationVariable UUID quizId, @CookieValue(name = "accessToken") String accessToken) {
-		String username = jwtUtilities.extractUsername(accessToken);
+	@MessageMapping("/{quizId}/host")
+	@SendTo("/topic/{quizId}/host")
+	public String hostGame(@DestinationVariable UUID quizId, String username) {
 		QuizDto quiz = quizService.getQuizById(username, quizId);
 
 		GameSessionDto session = new GameSessionDto();
@@ -47,14 +43,26 @@ public class GameController {
 		return passCode;
 	}
 
-	@MessageMapping("/app/{passCode}/players")
-	@SendTo("/game/{passCode}/players")
+	@MessageMapping("/{passCode}/join")
+	@SendTo("/topic/{passCode}/join")
+	public void joinGame(@DestinationVariable String passCode, String playerName) {
+		GameSessionDto session = getSession(passCode);
+		if (session.isInProgress())
+			return;
+
+		PlayerDto newPlayer = new PlayerDto();
+		newPlayer.setName(playerName);
+		session.getPlayers().add(newPlayer);
+	}
+
+	@MessageMapping("/{passCode}/players")
+	@SendTo("/topic/{passCode}/players")
 	public List<PlayerDto> broadcastPlayers(@DestinationVariable String passCode) {
 		return getSession(passCode).getPlayers();
 	}
 
-	@MessageMapping("/app/{passCode}/question")
-	@SendTo("/game/{passCode}/question")
+	@MessageMapping("/{passCode}/question")
+	@SendTo("/topic/{passCode}/question")
 	public QuestionDto broadcastNextQuestion(@DestinationVariable String passCode) {
 		GameSessionDto session = getSession(passCode);
 		Integer currentIndex = session.getCurrentQuestionIndex();
@@ -68,8 +76,8 @@ public class GameController {
 		return question;
 	}
 
-	@MessageMapping("/app/{passCode}/answer")
-	@SendTo("/game/{passCode}/answer")
+	@MessageMapping("/{passCode}/answer")
+	@SendTo("/topic/{passCode}/answer")
 	public void handleAnswer(@DestinationVariable String passCode, AnswerDto answer) {
 		GameSessionDto session = getSession(passCode);
 

@@ -41,9 +41,10 @@ export class DashboardComponent {
     this.router.navigate([`${this.username}/create`]);
   }
 
-  playBtnType = EButtonType.CONFIRM;
-  playBtnLabel = "Host"
-  handlePlayQuiz() {
+  hostBtnType = EButtonType.CONFIRM;
+  hostBtnLabel = "Host"
+  handleHostQuiz(quiz: Quiz) {
+    this.router.navigate([`${this.username}/lobby/${quiz.id}`]);
   }
 
   editBtnType = EButtonType.NEUTRAL;
