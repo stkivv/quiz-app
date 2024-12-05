@@ -1,0 +1,14 @@
+<div class="h-screen flex flex-col items-center justify-center">
+  <div class="bg-yellow-50 text-center rounded-2xl p-5 min-w-96">
+    <h1 class="text-black font-bold text-4xl m-10">JOIN GAME</h1>
+    <div class="flex flex-col">
+      <app-form-input placeholder='Enter passcode given by host...' [formControl]="passcode" />
+      <app-form-input placeholder='Pick a name...' [formControl]="name" />
+    </div>
+    <div class="flex flex-col">
+      <app-button class="min-h-12 my-1" [btnType]='submitBtnType' [btnLabel]='submitBtnLabel' (click)='handleJoin()' />
+      <app-button class="min-h-12 my-1" [btnType]='cancelBtnType' [btnLabel]='cancelBtnLabel'
+        (click)='handleCancel()' />
+    </div>
+  </div>
+</div>

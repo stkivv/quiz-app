@@ -5,6 +5,7 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CreateQuizComponent } from './create-quiz/create-quiz.component';
 import { GameLobbyComponent } from './game-lobby/game-lobby.component';
+import { JoinComponent } from './join/join.component';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -21,6 +22,7 @@ export const routes: Routes = [
     path: ':username/lobby', component: GameLobbyComponent, children: [
       { path: ':quizid', component: GameLobbyComponent }
     ]
-  }
+  },
+  { path: 'join', component: JoinComponent }
 ];
 

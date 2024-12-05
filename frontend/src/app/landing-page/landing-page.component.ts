@@ -17,6 +17,7 @@ export class LandingPageComponent {
 
   joinBtnLabel: string = 'Join game';
   handleJoinBtnClick() {
+    this.router.navigate(['join']);
   }
 
   loginBtnLabel: string = 'Log in';

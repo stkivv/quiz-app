@@ -1,5 +1,6 @@
 package com.stkivv.webquiz.backend.API;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -8,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
@@ -37,6 +37,7 @@ public class GameController {
 
 		GameSessionDto session = new GameSessionDto();
 		session.setQuestions(quiz.getQuestions());
+		session.setPlayers(new ArrayList<>());
 		String passCode = generatePassCode();
 		gameSessions.put(passCode, session);
 
@@ -44,15 +45,16 @@ public class GameController {
 	}
 
 	@MessageMapping("/{passCode}/join")
-	@SendTo("/topic/{passCode}/join")
-	public void joinGame(@DestinationVariable String passCode, String playerName) {
+	@SendTo("/topic/{passCode}/players")
+	public List<PlayerDto> joinGame(@DestinationVariable String passCode, String playerName) {
 		GameSessionDto session = getSession(passCode);
 		if (session.isInProgress())
-			return;
+			throw new RuntimeException("Game is already in progress!");
 
 		PlayerDto newPlayer = new PlayerDto();
 		newPlayer.setName(playerName);
 		session.getPlayers().add(newPlayer);
+		return session.getPlayers();
 	}
 
 	@MessageMapping("/{passCode}/players")
