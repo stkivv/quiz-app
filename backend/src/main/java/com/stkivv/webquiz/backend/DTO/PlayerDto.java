@@ -6,4 +6,5 @@ import lombok.Data;
 public class PlayerDto {
 	private String name;
 	private Integer score = 10;
+	private boolean answeredThisRound = false;
 }

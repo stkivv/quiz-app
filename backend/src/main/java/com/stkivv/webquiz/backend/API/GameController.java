@@ -1,5 +1,6 @@
 package com.stkivv.webquiz.backend.API;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.stkivv.webquiz.backend.DTO.AnswerDto;
@@ -23,9 +25,11 @@ import com.stkivv.webquiz.backend.Services.QuizService;
 public class GameController {
 
 	private final QuizService quizService;
+	private final SimpMessagingTemplate messagingTemplate;
 
-	public GameController(QuizService quizService) {
+	public GameController(QuizService quizService, SimpMessagingTemplate messagingTemplate) {
 		this.quizService = quizService;
+		this.messagingTemplate = messagingTemplate;
 	}
 
 	private Map<String, GameSessionDto> gameSessions = new ConcurrentHashMap<>();
@@ -63,14 +67,29 @@ public class GameController {
 		return getSession(passCode).getPlayers();
 	}
 
+	@MessageMapping("/{passCode}/start")
+	@SendTo("/topic/{passCode}/start")
+	public String startGame(@DestinationVariable String passCode) {
+		GameSessionDto session = getSession(passCode);
+		session.setInProgress(true);
+		return "Game start";
+	}
+
 	@MessageMapping("/{passCode}/question")
 	@SendTo("/topic/{passCode}/question")
 	public QuestionDto broadcastNextQuestion(@DestinationVariable String passCode) {
 		GameSessionDto session = getSession(passCode);
 		Integer currentIndex = session.getCurrentQuestionIndex();
 
+		// reset answer progress
+		session.getPlayers().forEach(p -> {
+			p.setAnsweredThisRound(false);
+		});
+
+		// out of questions, end the game
 		if (currentIndex > session.getHighestQuestionsIndex()) {
-			throw new IndexOutOfBoundsException("No more questions available");
+			messagingTemplate.convertAndSend("/topic/" + passCode + "/finished", "Game ended");
+			return null;
 		}
 
 		QuestionDto question = session.getCurrentQuestion();
@@ -78,23 +97,40 @@ public class GameController {
 		return question;
 	}
 
+	@MessageMapping("/{passCode}/finished")
+	@SendTo("/topic/{passCode}/finished")
+	public String notifyFinished(@DestinationVariable String passCode) {
+		gameSessions.remove(passCode);
+		return "Game ended";
+	}
+
 	@MessageMapping("/{passCode}/answer")
-	@SendTo("/topic/{passCode}/answer")
-	public void handleAnswer(@DestinationVariable String passCode, AnswerDto answer) {
+	@SendTo("/topic/{passCode}/answered") // returns boolean that shows if all players have answered
+	public boolean handleAnswer(@DestinationVariable String passCode, AnswerDto answer) {
 		GameSessionDto session = getSession(passCode);
-
-		if (answerIsCorrect(answer, session)) {
-			String playerName = answer.getPlayername();
-			List<PlayerDto> players = session.getPlayers();
-
-			for (PlayerDto player : players) {
-				if (player.getName().equals(playerName)) {
-					Integer score = player.getScore();
-					player.setScore(score + 10);
-					break;
+		String playerName = answer.getPlayername();
+		List<PlayerDto> players = session.getPlayers();
+		players.stream().forEach(p -> {
+			if (p.getName().equals(playerName)) {
+				p.setAnsweredThisRound(true);
+				if (answerIsCorrect(answer, session)) {
+					Integer score = p.getScore();
+					p.setScore(score + 10);
 				}
 			}
+		});
+		return allPlayersHaveAnsweredCurrentQuestion(passCode);
+
+	}
+
+	private boolean allPlayersHaveAnsweredCurrentQuestion(String passCode) {
+		GameSessionDto session = getSession(passCode);
+		List<PlayerDto> players = session.getPlayers();
+		for (PlayerDto p : players) {
+			if (!p.isAnsweredThisRound())
+				return false;
 		}
+		return true;
 	}
 
 	// Generates a random 6 digit alphanumeric string that will be used to access

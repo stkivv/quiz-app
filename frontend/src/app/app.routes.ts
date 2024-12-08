@@ -6,6 +6,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { CreateQuizComponent } from './create-quiz/create-quiz.component';
 import { GameLobbyComponent } from './game-lobby/game-lobby.component';
 import { JoinComponent } from './join/join.component';
+import { WaitingRoomComponent } from './waiting-room/waiting-room.component';
+import { HostGameComponent } from './host-game/host-game.component';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -23,6 +25,8 @@ export const routes: Routes = [
       { path: ':quizid', component: GameLobbyComponent }
     ]
   },
-  { path: 'join', component: JoinComponent }
+  { path: 'join', component: JoinComponent },
+  { path: ':playername/waitingroom/:passcode', component: WaitingRoomComponent },
+  { path: ':username/game/:passcode/host', component: HostGameComponent },
 ];
 

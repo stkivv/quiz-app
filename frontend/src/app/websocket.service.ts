@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Client, Message } from '@stomp/stompjs';
+import { Client, Message, StompSubscription } from '@stomp/stompjs';
 import { environment } from '../environments/environment';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+//@Injectable({
+//  providedIn: 'root'
+//})
+@Injectable()
 export class WebsocketService {
   private client!: Client;
   private connected$ = new BehaviorSubject<boolean>(false);
-  private destroy$ = new Subject<void>();
+  private subscriptions: StompSubscription[] = [];
 
   constructor() {
     this.initializeWebSocket();
@@ -41,18 +42,17 @@ export class WebsocketService {
 
   public subscribe(topic: string, callback: (message: Message) => void): void {
     this.connected$
-      .pipe(takeUntil(this.destroy$))
       .subscribe((connected) => {
         if (connected) {
           console.log("subscribing to: " + topic);
-          this.client.subscribe(topic, callback)
+          const sub = this.client.subscribe(topic, callback)
+          this.subscriptions.push(sub);
         }
       })
   }
 
   public sendMessage(destination: string, body: any): void {
     this.connected$
-      .pipe(takeUntil(this.destroy$))
       .subscribe((connected) => {
         if (connected) {
           console.log("sending message to: " + destination);
@@ -62,7 +62,6 @@ export class WebsocketService {
           });
         }
       })
-
   }
 
   public connect(): void {
@@ -70,11 +69,14 @@ export class WebsocketService {
   }
 
   public disconnect(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-
+    this.unsubscribeAll();
     if (this.client.active) {
       this.client.deactivate();
     }
+  }
+
+  public unsubscribeAll(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+    this.subscriptions = [];
   }
 }
