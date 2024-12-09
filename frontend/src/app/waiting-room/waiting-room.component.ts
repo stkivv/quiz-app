@@ -30,8 +30,7 @@ export class WaitingRoomComponent {
     });
 
     this.websocketService.subscribe(`/topic/${this.passcode}/start`, () => {
-      // todo! make a page to navigate to here
-      this.router.navigate(['???']);
+      this.router.navigate([`${this.name}/game/${this.passcode}/player`]);
     });
 
     this.websocketService.sendMessage(`/app/${this.passcode}/players`, "");

@@ -1,6 +1,5 @@
 package com.stkivv.webquiz.backend.API;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -8,12 +7,16 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.stkivv.webquiz.backend.DTO.AnswerDto;
 import com.stkivv.webquiz.backend.DTO.GameSessionDto;
 import com.stkivv.webquiz.backend.DTO.PlayerDto;
@@ -75,26 +78,11 @@ public class GameController {
 		return "Game start";
 	}
 
-	@MessageMapping("/{passCode}/question")
-	@SendTo("/topic/{passCode}/question")
-	public QuestionDto broadcastNextQuestion(@DestinationVariable String passCode) {
-		GameSessionDto session = getSession(passCode);
-		Integer currentIndex = session.getCurrentQuestionIndex();
-
-		// reset answer progress
-		session.getPlayers().forEach(p -> {
-			p.setAnsweredThisRound(false);
-		});
-
-		// out of questions, end the game
-		if (currentIndex > session.getHighestQuestionsIndex()) {
-			messagingTemplate.convertAndSend("/topic/" + passCode + "/finished", "Game ended");
-			return null;
-		}
-
-		QuestionDto question = session.getCurrentQuestion();
-		session.setCurrentQuestionIndex(currentIndex + 1);
-		return question;
+	@MessageMapping("/{passCode}/roundover")
+	@SendTo("/topic/{passCode}/roundover")
+	public boolean endRound(@DestinationVariable String passCode) {
+		nextQuestion(passCode);
+		return true;
 	}
 
 	@MessageMapping("/{passCode}/finished")
@@ -104,8 +92,23 @@ public class GameController {
 		return "Game ended";
 	}
 
+	@MessageMapping("/{passCode}/getquestion")
+	@SendTo("/topic/{passCode}/question")
+	public QuestionDto getCurrentQuestion(@DestinationVariable String passCode) {
+		GameSessionDto session = getSession(passCode);
+
+		// end game if out of questions
+		Integer currentIndex = session.getCurrentQuestionIndex();
+		if (currentIndex > session.getHighestQuestionsIndex()) {
+			messagingTemplate.convertAndSend("/topic/" + passCode + "/finished", "Game ended");
+		}
+
+		QuestionDto question = session.getCurrentQuestion();
+		return question;
+	}
+
 	@MessageMapping("/{passCode}/answer")
-	@SendTo("/topic/{passCode}/answered") // returns boolean that shows if all players have answered
+	@SendTo("/topic/{passCode}/roundover")
 	public boolean handleAnswer(@DestinationVariable String passCode, AnswerDto answer) {
 		GameSessionDto session = getSession(passCode);
 		String playerName = answer.getPlayername();
@@ -120,7 +123,18 @@ public class GameController {
 			}
 		});
 		return allPlayersHaveAnsweredCurrentQuestion(passCode);
+	}
 
+	void nextQuestion(String passCode) {
+		GameSessionDto session = getSession(passCode);
+		Integer currentIndex = session.getCurrentQuestionIndex();
+
+		// reset answer progress
+		session.getPlayers().forEach(p -> {
+			p.setAnsweredThisRound(false);
+		});
+
+		session.setCurrentQuestionIndex(currentIndex + 1);
 	}
 
 	private boolean allPlayersHaveAnsweredCurrentQuestion(String passCode) {
