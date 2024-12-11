@@ -4,6 +4,7 @@ import { WebsocketService } from '../websocket.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Player } from '../dtos/player-dto';
 import { EButtonType } from '../button/EButtonType';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'app-scoreboard-page',
@@ -11,14 +12,14 @@ import { EButtonType } from '../button/EButtonType';
   imports: [ButtonComponent],
   templateUrl: './scoreboard-page.component.html',
   styleUrl: './scoreboard-page.component.css',
-  providers: [WebsocketService]
+  providers: [WebsocketService, GameService]
 })
 export class ScoreboardPageComponent {
   players: Player[] = [];
   passcode = "";
   username = null;
 
-  constructor(private router: Router, private route: ActivatedRoute, private websocketService: WebsocketService) {
+  constructor(private router: Router, private route: ActivatedRoute, private gameService: GameService) {
     this.passcode = this.route.snapshot.paramMap.get('passcode')!;
   }
 
@@ -27,13 +28,13 @@ export class ScoreboardPageComponent {
       this.username = params['username'];
     })
 
-    this.websocketService.connect();
+    this.gameService.connectToWebsocket(this.passcode);
 
-    this.websocketService.subscribe(`/topic/${this.passcode}/players`, (playersMessage) => {
-      this.players = JSON.parse(playersMessage.body);
+    this.gameService.subscribeToPlayerList((players: Player[]) => {
+      this.players = players;
     });
 
-    this.websocketService.sendMessage(`/app/${this.passcode}/players`, "");
+    this.gameService.getPlayers();
   }
 
   exitBtnType = EButtonType.DANGER;
@@ -44,6 +45,6 @@ export class ScoreboardPageComponent {
   }
 
   ngOnDestroy(): void {
-    this.websocketService.disconnect();
+    this.gameService.disconnectFromWebsocket();
   }
 }

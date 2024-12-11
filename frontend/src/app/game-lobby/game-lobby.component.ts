@@ -6,6 +6,7 @@ import { Quiz } from '../dtos/quiz-dto';
 import { Player } from '../dtos/player-dto';
 import { EButtonType } from '../button/EButtonType';
 import { ButtonComponent } from '../button/button.component';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'app-game-lobby',
@@ -13,7 +14,7 @@ import { ButtonComponent } from '../button/button.component';
   imports: [ButtonComponent],
   templateUrl: './game-lobby.component.html',
   styleUrl: './game-lobby.component.css',
-  providers: [WebsocketService]
+  providers: [WebsocketService, GameService]
 })
 export class GameLobbyComponent {
   quizId = "";
@@ -22,7 +23,7 @@ export class GameLobbyComponent {
   passcode = "please wait...";
   players = [] as Player[];
 
-  constructor(private webSocketService: WebsocketService,
+  constructor(private gameService: GameService,
     private backendService: BackendService,
     private router: Router,
     private route: ActivatedRoute) { }
@@ -36,22 +37,23 @@ export class GameLobbyComponent {
       this.quizTitle = quiz.title;
     });
 
-    this.webSocketService.connect();
+    // initially connect without passcode because it doesnt exist yet
+    // NB! passcode is added with subscribeToHostEvent().
+    this.gameService.connectToWebsocket("");
 
-    this.webSocketService.subscribe(`/topic/${this.quizId}/host`, (message) => {
-      this.passcode = message.body;
+    this.gameService.subscribeToHostEvent(this.quizId, (passcode: string) => {
+      this.passcode = passcode;
 
-      this.webSocketService.subscribe(`/topic/${message.body}/players`, (playersMessage) => {
-        this.players = JSON.parse(playersMessage.body);
+      this.gameService.subscribeToPlayerList((players: Player[]) => {
+        this.players = players;
       });
 
-      this.webSocketService.subscribe(`/topic/${this.passcode}/start`, () => {
+      this.gameService.subscribeToGameStartEvent(() => {
         this.router.navigate([`${this.username}/game/${this.passcode}/host`]);
       });
     });
 
-    this.webSocketService.sendMessage(`/app/${this.quizId}/host`, this.username);
-
+    this.gameService.hostGame(this.quizId, this.username);
   }
 
   cancelBtnLabel = "Cancel";
@@ -63,11 +65,11 @@ export class GameLobbyComponent {
   startBtnLabel = "Start";
   startBtnType = EButtonType.CONFIRM;
   startBtnClick = () => {
-    this.webSocketService.sendMessage(`/app/${this.passcode}/start`, this.username);
+    this.gameService.startGame(this.username);
   }
 
   ngOnDestroy(): void {
-    this.webSocketService.disconnect();
+    this.gameService.disconnectFromWebsocket();
   }
 
 }

@@ -5,6 +5,7 @@ import { FormControl } from '@angular/forms';
 import { EButtonType } from '../button/EButtonType';
 import { Router } from '@angular/router';
 import { WebsocketService } from '../websocket.service';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'app-join',
@@ -12,10 +13,10 @@ import { WebsocketService } from '../websocket.service';
   imports: [FormInputComponent, ButtonComponent],
   templateUrl: './join.component.html',
   styleUrl: './join.component.css',
-  providers: [WebsocketService]
+  providers: [WebsocketService, GameService]
 })
 export class JoinComponent {
-  constructor(private router: Router, private websocketService: WebsocketService) { }
+  constructor(private router: Router, private gameService: GameService) { }
 
   name = new FormControl('');
   passcode = new FormControl('');
@@ -25,13 +26,13 @@ export class JoinComponent {
   handleJoin() {
     if (!this.name.value || !this.passcode.value || this.passcode.value.length !== 6) return;
 
-    this.websocketService.connect();
+    this.gameService.connectToWebsocket(this.passcode.value);
 
-    this.websocketService.subscribe(`/topic/${this.passcode.value}/players`, () => {
+    this.gameService.subscribeToPlayerList(() => {
       this.router.navigate([`${this.name.value}/waitingroom/${this.passcode.value}`]);
     });
 
-    this.websocketService.sendMessage(`/app/${this.passcode.value}/join`, this.name.value);
+    this.gameService.joinGame(this.name.value);
   }
 
   cancelBtnType = EButtonType.CANCEL;
@@ -41,6 +42,6 @@ export class JoinComponent {
   }
 
   ngOnDestroy(): void {
-    this.websocketService.disconnect();
+    this.gameService.disconnectFromWebsocket();
   }
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebsocketService } from '../websocket.service';
 import { Player } from '../dtos/player-dto';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'app-waiting-room',
@@ -9,7 +10,7 @@ import { Player } from '../dtos/player-dto';
   imports: [],
   templateUrl: './waiting-room.component.html',
   styleUrl: './waiting-room.component.css',
-  providers: [WebsocketService]
+  providers: [WebsocketService, GameService]
 })
 
 export class WaitingRoomComponent {
@@ -17,26 +18,26 @@ export class WaitingRoomComponent {
   passcode = "";
   players = [] as Player[];
 
-  constructor(private router: Router, private route: ActivatedRoute, private websocketService: WebsocketService) { }
+  constructor(private router: Router, private route: ActivatedRoute, private gameService: GameService) { }
 
   ngOnInit() {
     this.name = this.route.snapshot.paramMap.get('playername')!;
     this.passcode = this.route.snapshot.paramMap.get('passcode')!;
 
-    this.websocketService.connect();
+    this.gameService.connectToWebsocket(this.passcode);
 
-    this.websocketService.subscribe(`/topic/${this.passcode}/players`, (playersMessage) => {
-      this.players = JSON.parse(playersMessage.body);
+    this.gameService.subscribeToPlayerList((players: Player[]) => {
+      this.players = players
     });
 
-    this.websocketService.subscribe(`/topic/${this.passcode}/start`, () => {
+    this.gameService.subscribeToGameStartEvent(() => {
       this.router.navigate([`${this.name}/game/${this.passcode}/player`]);
     });
 
-    this.websocketService.sendMessage(`/app/${this.passcode}/players`, "");
+    this.gameService.getPlayers();
   }
 
   ngOnDestroy(): void {
-    this.websocketService.disconnect();
+    this.gameService.disconnectFromWebsocket();
   }
 }

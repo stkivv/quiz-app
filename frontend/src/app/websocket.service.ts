@@ -3,9 +3,6 @@ import { Client, Message, StompSubscription } from '@stomp/stompjs';
 import { environment } from '../environments/environment';
 import { BehaviorSubject } from 'rxjs';
 
-//@Injectable({
-//  providedIn: 'root'
-//})
 @Injectable()
 export class WebsocketService {
   private client!: Client;
@@ -25,12 +22,10 @@ export class WebsocketService {
     });
 
     this.client.onConnect = () => {
-      console.log('Connected to WebSocket');
       this.connected$.next(true);
     };
 
     this.client.onDisconnect = () => {
-      console.log('Disconnected from WebSocket');
       this.connected$.next(false);
     };
 
@@ -44,7 +39,6 @@ export class WebsocketService {
     this.connected$
       .subscribe((connected) => {
         if (connected) {
-          console.log("subscribing to: " + topic);
           const sub = this.client.subscribe(topic, callback)
           this.subscriptions.push(sub);
         }
@@ -55,7 +49,6 @@ export class WebsocketService {
     this.connected$
       .subscribe((connected) => {
         if (connected) {
-          console.log("sending message to: " + destination);
           this.client.publish({
             destination: destination,
             body: body,

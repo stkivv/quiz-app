@@ -1,10 +1,11 @@
-import { Component, Host } from '@angular/core';
+import { Component } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebsocketService } from '../websocket.service';
 import { Player } from '../dtos/player-dto';
 import { Question } from '../dtos/question-dto';
 import { EButtonType } from '../button/EButtonType';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'app-host-game',
@@ -12,7 +13,7 @@ import { EButtonType } from '../button/EButtonType';
   imports: [ButtonComponent],
   templateUrl: './host-game.component.html',
   styleUrl: './host-game.component.css',
-  providers: [WebsocketService]
+  providers: [WebsocketService, GameService]
 })
 export class HostGameComponent {
   username = "";
@@ -22,26 +23,25 @@ export class HostGameComponent {
   correctAnswer = "";
   roundOver = false;
 
-  constructor(private router: Router, private route: ActivatedRoute, private websocketService: WebsocketService) {
+  constructor(private router: Router, private route: ActivatedRoute, private gameService: GameService) {
     this.passcode = this.route.snapshot.paramMap.get('passcode')!;
     this.username = this.route.snapshot.paramMap.get('username')!;
   }
 
   ngOnInit() {
-    this.websocketService.connect();
+    this.gameService.connectToWebsocket(this.passcode);
 
-    this.websocketService.subscribe(`/topic/${this.passcode}/players`, (playersMessage) => {
-      this.players = JSON.parse(playersMessage.body);
+    this.gameService.subscribeToPlayerList((players: Player[]) => {
+      this.players = players;
     });
 
-    this.websocketService.subscribe(`/topic/${this.passcode}/question`, (questionMessage) => {
+    this.gameService.subscribeToNewQuestionEvent((question: Question) => {
       this.roundOver = false;
-      this.question = JSON.parse(questionMessage.body);
+      this.question = question;
       this.correctAnswer = this.question!.options.find(q => q.correctAnswer)!.phrasing;
-    });
+    })
 
-    this.websocketService.subscribe(`/topic/${this.passcode}/finished`, () => {
-      console.log("game finished");
+    this.gameService.subscribeToGameFinishedEvent(() => {
       this.router.navigate([this.passcode + '/scoreboard'], {
         queryParams: {
           username: this.username
@@ -49,15 +49,12 @@ export class HostGameComponent {
       });
     });
 
-    this.websocketService.subscribe(`/topic/${this.passcode}/roundover`, (msg) => {
-      const isOver: boolean = JSON.parse(msg.body);
-      if (!isOver) return;
-      console.info("round over");
+    this.gameService.subscribeToRoundOverEvent(() => {
       this.roundOver = true;
-      this.websocketService.sendMessage(`/app/${this.passcode}/players`, "");
-    });
+      this.gameService.getPlayers();
+    })
 
-    this.websocketService.sendMessage(`/app/${this.passcode}/getquestion`, "");
+    this.gameService.getQuestion();
   }
 
 
@@ -66,22 +63,22 @@ export class HostGameComponent {
   skipBtnLabel = "Skip";
   onSkip() {
     this.roundOver = true;
-    this.websocketService.sendMessage(`/app/${this.passcode}/roundover`, "");
+    this.gameService.sendRoundOverSignal();
   }
 
   nextBtnType = EButtonType.CONFIRM;
   nextBtnLabel = "Next";
   onNext() {
-    this.websocketService.sendMessage(`/app/${this.passcode}/getquestion`, "");
+    this.gameService.getQuestion();
   }
 
   exitBtnType = EButtonType.DANGER;
   exitBtnLabel = "End";
   onExit() {
-    this.websocketService.sendMessage(`/app/${this.passcode}/finished`, "");
+    this.gameService.sendGameFinishedSignal();
   }
 
   ngOnDestroy(): void {
-    this.websocketService.disconnect();
+    this.gameService.disconnectFromWebsocket();
   }
 }
