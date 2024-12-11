@@ -76,7 +76,7 @@ export class HostGameComponent {
   }
 
   exitBtnType = EButtonType.DANGER;
-  exitBtnLabel = "Exit";
+  exitBtnLabel = "End";
   onExit() {
     this.websocketService.sendMessage(`/app/${this.passcode}/finished`, "");
   }

@@ -144,6 +144,7 @@ public class GameController {
 			if (!p.isAnsweredThisRound())
 				return false;
 		}
+		nextQuestion(passCode);
 		return true;
 	}
 
