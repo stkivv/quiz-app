@@ -1,41 +1,33 @@
 import { Component } from '@angular/core';
 import { WebsocketService } from '../websocket.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendService } from '../backend.service';
-import { Quiz } from '../dtos/quiz-dto';
 import { Player } from '../dtos/player-dto';
 import { EButtonType } from '../button/EButtonType';
 import { ButtonComponent } from '../button/button.component';
 import { GameService } from '../game.service';
+import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
 
 @Component({
   selector: 'app-game-lobby',
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, LeaderboardComponent],
   templateUrl: './game-lobby.component.html',
   styleUrl: './game-lobby.component.css',
   providers: [WebsocketService, GameService]
 })
 export class GameLobbyComponent {
   quizId = "";
-  quizTitle = "";
   username = "";
   passcode = "please wait...";
   players = [] as Player[];
 
   constructor(private gameService: GameService,
-    private backendService: BackendService,
     private router: Router,
     private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.quizId = this.route.firstChild?.snapshot.paramMap.get('quizid')!;
     this.username = this.route.snapshot.paramMap.get('username')!;
-
-    const url = "quiz/" + this.quizId;
-    this.backendService.doGet<Quiz>(url, 'json').subscribe(quiz => {
-      this.quizTitle = quiz.title;
-    });
 
     // initially connect without passcode because it doesnt exist yet
     // NB! passcode is added with subscribeToHostEvent().

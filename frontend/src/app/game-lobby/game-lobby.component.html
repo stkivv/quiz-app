@@ -1,16 +1,11 @@
 <div class="h-screen flex flex-col items-center p-5">
-  <div class="bg-yellow-50 flex flex-col text-center rounded-2xl p-5 w-full h-full divide-y divide-black">
-    <div class="flex justify-center min-h-16">
-      <div class="text-black text-center font-bold text-4xl m-1">{{this.quizTitle}}</div>
-    </div>
+  <div class="bg-yellow-50 flex flex-col text-center rounded-2xl p-5 w-full h-full">
     <div class="overflow-y-scroll h-full">
       <p class="text-2xl font-bold">PASSCODE: {{this.passcode}}</p>
       <div class="mt-8">
-        <div class="text-black text-center font-bold text-xl m-1">Joined players:</div>
+        <div class="text-black text-left font-bold text-xl m-1">Joined players:</div>
       </div>
-      @for(player of players; track player.name){
-      <p>{{player.name}}</p>
-      }
+      <app-leaderboard [players]="players" />
     </div>
     <div class="flex justify-center h-16 mt-auto p-1">
       <div class="w-20">

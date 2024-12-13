@@ -3,11 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WebsocketService } from '../websocket.service';
 import { Player } from '../dtos/player-dto';
 import { GameService } from '../game.service';
+import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
 
 @Component({
   selector: 'app-waiting-room',
   standalone: true,
-  imports: [],
+  imports: [LeaderboardComponent],
   templateUrl: './waiting-room.component.html',
   styleUrl: './waiting-room.component.css',
   providers: [WebsocketService, GameService]

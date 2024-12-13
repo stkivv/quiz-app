@@ -5,11 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Player } from '../dtos/player-dto';
 import { EButtonType } from '../button/EButtonType';
 import { GameService } from '../game.service';
+import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
 
 @Component({
   selector: 'app-scoreboard-page',
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, LeaderboardComponent],
   templateUrl: './scoreboard-page.component.html',
   styleUrl: './scoreboard-page.component.css',
   providers: [WebsocketService, GameService]

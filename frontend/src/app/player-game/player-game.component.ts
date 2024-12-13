@@ -8,11 +8,12 @@ import { AnswerDto } from '../dtos/answer-dto';
 import { ButtonComponent } from '../button/button.component';
 import { FormsModule } from '@angular/forms';
 import { GameService } from '../game.service';
+import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
 
 @Component({
   selector: 'app-player-game',
   standalone: true,
-  imports: [ButtonComponent, FormsModule],
+  imports: [ButtonComponent, FormsModule, LeaderboardComponent],
   templateUrl: './player-game.component.html',
   styleUrl: './player-game.component.css',
   providers: [WebsocketService, GameService]

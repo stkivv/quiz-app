@@ -6,11 +6,12 @@ import { Player } from '../dtos/player-dto';
 import { Question } from '../dtos/question-dto';
 import { EButtonType } from '../button/EButtonType';
 import { GameService } from '../game.service';
+import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
 
 @Component({
   selector: 'app-host-game',
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, LeaderboardComponent],
   templateUrl: './host-game.component.html',
   styleUrl: './host-game.component.css',
   providers: [WebsocketService, GameService]

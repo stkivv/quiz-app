@@ -1,0 +1,10 @@
+<div class="divide-yellow-600 w-1/2 mx-auto">
+  @for(player of players; track player; let i = $index) {
+  <div class="flex font-bold p-2 m-1">
+    <div class="text-right mr-2 flex-1">{{ player.name }}</div>
+    <p class="font-normal">|</p>
+    <div class="text-left ml-2 flex-1">{{ player.score }} pts</div>
+  </div>
+  <hr>
+  }
+</div>
