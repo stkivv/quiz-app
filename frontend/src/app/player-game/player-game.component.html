@@ -7,12 +7,17 @@
           {{question ? question.phrasing : "waiting for question..."}}
         </div>
       </div>
-      @for(option of question.options; track option.phrasing) {
-      <div>
-        <input type="radio" name="options" [value]="option.phrasing" [(ngModel)]="selectedOption" />
-        {{ option.phrasing }}
+      <div class="flex flex-col items-start">
+        @for(option of question.options; track option.phrasing; let i = $index) {
+        <div class="w-full flex my-1 p-2 rounded border-orange-500 border cursor-pointer"
+          [ngClass]="{ 'bg-orange-500 text-white': selectedOption === option.phrasing }"
+          (click)="selectOption(option.phrasing)">
+          <label>
+            {{alphabet[i]}}) {{ option.phrasing }}
+          </label>
+        </div>
+        }
       </div>
-      }
       <div class="flex justify-center h-16 mt-auto p-1">
         <div class="w-20">
           <app-button [btnType]="confirmBtnType" [btnLabel]="confirmBtnLabel" (click)="onConfirm()" />
@@ -20,13 +25,8 @@
       </div>
       }
       @if(roundOver && players) {
-      <div class="flex flex-col justify-center min-h-16">
-        <div class="text-black text-center font-bold text-4xl m-1">
-          Correct answer:
-        </div>
-        <div class="text-black text-center font-bold text-2xl m-1">
-          {{correctAnswer}}
-        </div>
+      <div class="text-white bg-green-600 rounded p-1 text-center font-bold text-2xl m-1">
+        Answer: {{getCorrectAnswer()}}
       </div>
       <hr>
       <div class="flex flex-col justify-center min-h-16">

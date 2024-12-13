@@ -23,6 +23,7 @@ export class HostGameComponent {
   question: Question | null = null;
   correctAnswer = "";
   roundOver = false;
+  alphabet: string[] = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
   constructor(private router: Router, private route: ActivatedRoute, private gameService: GameService) {
     this.passcode = this.route.snapshot.paramMap.get('passcode')!;
