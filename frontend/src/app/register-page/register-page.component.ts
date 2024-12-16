@@ -6,11 +6,12 @@ import { ButtonComponent } from '../button/button.component';
 import { EButtonType } from '../button/EButtonType';
 import { Router } from '@angular/router';
 import { BackendService } from '../backend.service';
+import { PageBgSmallComponent } from '../page-bg-small/page-bg-small.component';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [FormInputComponent, ButtonComponent],
+  imports: [FormInputComponent, ButtonComponent, PageBgSmallComponent],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.css'
 })

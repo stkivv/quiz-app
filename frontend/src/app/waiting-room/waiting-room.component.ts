@@ -4,11 +4,12 @@ import { WebsocketService } from '../websocket.service';
 import { Player } from '../dtos/player-dto';
 import { GameService } from '../game.service';
 import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
+import { PageBgComponent } from '../page-bg/page-bg.component';
 
 @Component({
   selector: 'app-waiting-room',
   standalone: true,
-  imports: [LeaderboardComponent],
+  imports: [LeaderboardComponent, PageBgComponent],
   templateUrl: './waiting-room.component.html',
   styleUrl: './waiting-room.component.css',
   providers: [WebsocketService, GameService]

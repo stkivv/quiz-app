@@ -6,11 +6,12 @@ import { EButtonType } from '../button/EButtonType';
 import { Router } from '@angular/router';
 import { WebsocketService } from '../websocket.service';
 import { GameService } from '../game.service';
+import { PageBgSmallComponent } from '../page-bg-small/page-bg-small.component';
 
 @Component({
   selector: 'app-join',
   standalone: true,
-  imports: [FormInputComponent, ButtonComponent],
+  imports: [FormInputComponent, ButtonComponent, PageBgSmallComponent],
   templateUrl: './join.component.html',
   styleUrl: './join.component.css',
   providers: [WebsocketService, GameService]

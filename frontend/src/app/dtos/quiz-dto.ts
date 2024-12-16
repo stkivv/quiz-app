@@ -6,6 +6,6 @@ export interface Quiz {
   description: string,
   publicQuiz: boolean,
   passCode?: string,
-  lastEdit?: Date,
+  lastEdit?: string | Date,
   questions: Question[]
 }

@@ -4,11 +4,12 @@ import { EButtonType } from '../button/EButtonType';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Quiz } from '../dtos/quiz-dto';
 import { BackendService } from '../backend.service';
+import { PageBgComponent } from '../page-bg/page-bg.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, PageBgComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -28,6 +29,12 @@ export class DashboardComponent {
     this.backendService.doGet<Quiz[]>(url, 'json').subscribe(quizzes => {
       this.quizzes = quizzes;
     });
+  }
+
+  getQuizEditedTime(time: string | undefined | Date): string {
+    if (!time) return "";
+    const date: Date = new Date(time);
+    return date.toLocaleDateString();
   }
 
   logOutBtnType = EButtonType.MENU;

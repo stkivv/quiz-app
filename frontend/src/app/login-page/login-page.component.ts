@@ -6,11 +6,12 @@ import { FormInputComponent } from '../form-input/form-input.component';
 import { ButtonComponent } from '../button/button.component';
 import { BackendService } from '../backend.service';
 import { userDto } from '../dtos/user-dto';
+import { PageBgSmallComponent } from '../page-bg-small/page-bg-small.component';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormInputComponent, ButtonComponent],
+  imports: [FormInputComponent, ButtonComponent, PageBgSmallComponent],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css'
 })

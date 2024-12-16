@@ -6,11 +6,12 @@ import { Player } from '../dtos/player-dto';
 import { EButtonType } from '../button/EButtonType';
 import { GameService } from '../game.service';
 import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
+import { PageBgComponent } from '../page-bg/page-bg.component';
 
 @Component({
   selector: 'app-scoreboard-page',
   standalone: true,
-  imports: [ButtonComponent, LeaderboardComponent],
+  imports: [ButtonComponent, LeaderboardComponent, PageBgComponent],
   templateUrl: './scoreboard-page.component.html',
   styleUrl: './scoreboard-page.component.css',
   providers: [WebsocketService, GameService]

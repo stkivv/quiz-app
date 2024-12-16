@@ -8,11 +8,12 @@ import { BackendService } from '../backend.service';
 import { Quiz } from '../dtos/quiz-dto';
 import { FormControl } from '@angular/forms';
 import { FormInputComponent } from '../form-input/form-input.component';
+import { PageBgComponent } from '../page-bg/page-bg.component';
 
 @Component({
   selector: 'app-create-quiz',
   standalone: true,
-  imports: [ButtonComponent, AddQuestionModalComponent, FormInputComponent],
+  imports: [ButtonComponent, AddQuestionModalComponent, FormInputComponent, PageBgComponent],
   templateUrl: './create-quiz.component.html',
   styleUrl: './create-quiz.component.css'
 })

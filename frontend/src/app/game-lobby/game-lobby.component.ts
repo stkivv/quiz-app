@@ -6,11 +6,12 @@ import { EButtonType } from '../button/EButtonType';
 import { ButtonComponent } from '../button/button.component';
 import { GameService } from '../game.service';
 import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
+import { PageBgComponent } from '../page-bg/page-bg.component';
 
 @Component({
   selector: 'app-game-lobby',
   standalone: true,
-  imports: [ButtonComponent, LeaderboardComponent],
+  imports: [ButtonComponent, LeaderboardComponent, PageBgComponent],
   templateUrl: './game-lobby.component.html',
   styleUrl: './game-lobby.component.css',
   providers: [WebsocketService, GameService]

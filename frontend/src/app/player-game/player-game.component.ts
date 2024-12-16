@@ -10,11 +10,12 @@ import { FormsModule } from '@angular/forms';
 import { GameService } from '../game.service';
 import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
 import { CommonModule } from '@angular/common';
+import { PageBgComponent } from '../page-bg/page-bg.component';
 
 @Component({
   selector: 'app-player-game',
   standalone: true,
-  imports: [ButtonComponent, FormsModule, LeaderboardComponent, CommonModule],
+  imports: [ButtonComponent, FormsModule, LeaderboardComponent, CommonModule, PageBgComponent],
   templateUrl: './player-game.component.html',
   styleUrl: './player-game.component.css',
   providers: [WebsocketService, GameService]

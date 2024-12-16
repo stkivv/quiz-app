@@ -1,16 +1,14 @@
-<div class="h-screen flex flex-col items-center justify-center">
-  <div class="bg-yellow-50 text-center rounded-2xl p-5 min-w-96">
-    <h1 class="text-black font-bold text-4xl m-10">SIGN UP</h1>
-    <div class="flex flex-col">
-      <app-form-input placeholder='Username' [formControl]="username"></app-form-input>
-      <app-form-input placeholder='Password' inputType='password' [formControl]="password"></app-form-input>
-      <app-form-input placeholder='Confirm password' inputType='password'
-        [formControl]="confirmPassword"></app-form-input>
-    </div>
-    <div class="flex flex-col">
-      <app-button class="min-h-12 my-1" [btnType]='submitBtnType' [btnLabel]='submitBtnLabel' (click)='submitForm()' />
-      <app-button class="min-h-12 my-1" [btnType]='cancelBtnType' [btnLabel]='cancelBtnLabel'
-        (click)='handleCancelClick()' />
-    </div>
+<app-page-bg-small>
+  <h1 class="text-black font-bold text-4xl m-10">SIGN UP</h1>
+  <div class="flex flex-col">
+    <app-form-input placeholder='Username' [formControl]="username"></app-form-input>
+    <app-form-input placeholder='Password' inputType='password' [formControl]="password"></app-form-input>
+    <app-form-input placeholder='Confirm password' inputType='password'
+      [formControl]="confirmPassword"></app-form-input>
   </div>
-</div>
+  <div class="flex flex-col">
+    <app-button class="min-h-12 my-1" [btnType]='submitBtnType' [btnLabel]='submitBtnLabel' (click)='submitForm()' />
+    <app-button class="min-h-12 my-1" [btnType]='cancelBtnType' [btnLabel]='cancelBtnLabel'
+      (click)='handleCancelClick()' />
+  </div>
+</app-page-bg-small>

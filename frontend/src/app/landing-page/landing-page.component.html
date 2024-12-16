@@ -1,18 +1,16 @@
-<div class="h-screen flex flex-col items-center justify-center">
-  <div class="bg-yellow-50 min-w-96 text-center rounded-2xl p-5">
-    <h1 class="text-black font-bold text-4xl">
-      QUIZ APP
-    </h1>
-    <p class="text-black text-lg m-3">
-      Create quizzes and play them in real time!
-    </p>
-    <div class="flex flex-col">
-      <app-button class="my-1 min-h-12" [btnType]="btnType" (onClickAction)="handleJoinBtnClick()"
-        [btnLabel]="joinBtnLabel" />
-      <app-button class="my-1 min-h-12" [btnType]="btnType" (onClickAction)="handleLoginBtnClick()"
-        [btnLabel]="loginBtnLabel" />
-      <app-button class="my-1 min-h-12" [btnType]="btnType" (onClickAction)="handleRegisterButtonClick()"
-        [btnLabel]="registerBtnLabel" />
-    </div>
+<app-page-bg-small>
+  <h1 class="text-black font-bold text-4xl">
+    QUIZ APP (beta)
+  </h1>
+  <p class="text-black text-lg m-3">
+    Create quizzes and play them in real time!
+  </p>
+  <div class="flex flex-col">
+    <app-button class="my-1 min-h-12" [btnType]="btnType" (onClickAction)="handleJoinBtnClick()"
+      [btnLabel]="joinBtnLabel" />
+    <app-button class="my-1 min-h-12" [btnType]="btnType" (onClickAction)="handleLoginBtnClick()"
+      [btnLabel]="loginBtnLabel" />
+    <app-button class="my-1 min-h-12" [btnType]="btnType" (onClickAction)="handleRegisterButtonClick()"
+      [btnLabel]="registerBtnLabel" />
   </div>
-</div>
+</app-page-bg-small>
