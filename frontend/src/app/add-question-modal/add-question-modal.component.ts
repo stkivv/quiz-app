@@ -56,8 +56,6 @@ export class AddQuestionModalComponent {
     this.close.emit();
   }
 
-  deleteOptionBtnType = EButtonType.DANGER;
-  deleteOptionBtnLabel = "X"
   handleDeleteOption(index: number) {
     this.options.removeAt(index);
   }

@@ -17,9 +17,9 @@
         (click)="handleToggleOptionCorrect(i)">
         Wrong</div>
       }
-      <div class="w-6 h-8 pb-2 ml-2">
-        <app-button (click)="handleDeleteOption(i)" [btnType]="deleteOptionBtnType" [btnLabel]="deleteOptionBtnLabel" />
-      </div>
+      <div class="bg-red-600 text-white hover:cursor-pointer hover:bg-red-500 p-1 mb-2 ml-2 w-10 font-bold rounded"
+        (click)="handleDeleteOption(i)">
+        X</div>
     </div>
     }
     <button class="flex bg-amber-400 hover:bg-amber-500 font-semibold rounded text-sm p-2 w-full my-2"

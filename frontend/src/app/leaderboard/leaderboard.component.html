@@ -1,9 +1,9 @@
-<div class="divide-yellow-600 w-1/2 mx-auto">
+<div class="divide-yellow-600 w-10/12 mx-auto">
   @for(player of players; track player; let i = $index) {
-  <div class="flex font-bold p-2 m-1">
-    <div class="text-right mr-2 flex-1">{{ player.name }}</div>
-    <p class="font-normal">|</p>
-    <div class="text-left ml-2 flex-1">{{ player.score }} pts</div>
+  <div class="flex font-bold p-2 m-1 justify-center">
+    <div class="text-right flex-1 flex-grow">{{ player.name }}</div>
+    <div class="mx-2">|</div>
+    <div class="text-left flex-grow flex-1">{{ player.score }} pts</div>
   </div>
   <hr>
   }

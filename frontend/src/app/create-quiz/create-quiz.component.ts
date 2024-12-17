@@ -52,6 +52,10 @@ export class CreateQuizComponent {
     this.questions[swapIndex] = value;
   }
 
+  removeQuestion(index: number) {
+    this.questions.splice(index, 1);
+  }
+
   addQuestionBtnType = EButtonType.CONFIRM;
   addQuestionLabel = "Add new question +"
   showQuestionModal = false;

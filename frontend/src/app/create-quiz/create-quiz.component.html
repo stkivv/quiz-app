@@ -11,20 +11,22 @@
   <div class=" my-2 w-full h-full overflow-scroll rounded">
     <div class="text-left font-bold my-2">Questions:</div>
     @for (question of questions; track question; let i = $index) {
-    <div class="text-left border border-black content-center p-4 h-28 bg-white rounded my-2">
-      <div class="flex flex-row">
-        <div class="flex flex-col mr-6 justify-center">
-          <button class="bg-gray-200 rounded px-2 py-1 my-1" (click)="moveQuestion(i, 'forward')">Up</button>
-          <button class="bg-gray-200 rounded px-2 py-1 my-1" (click)="moveQuestion(i, 'back')">Down</button>
+    <div class="text-left overflow-hidden border border-black content-center p-4 bg-white rounded my-2">
+      <div class="flex flex-col md:flex-row">
+        <div class="flex flex-row md:flex-col mb-2 md:mr-6 md:justify-center">
+          <button class="bg-gray-200 rounded px-2 py-1 mx-1 md:my-1" (click)="moveQuestion(i, 'forward')">Up</button>
+          <button class="bg-gray-200 rounded px-2 py-1 mx-1 md:my-1" (click)="moveQuestion(i, 'back')">Down</button>
+          <button class="bg-gray-200 rounded px-2 py-1 mx-1 md:my-1" (click)="removeQuestion(i)">Remove</button>
         </div>
         <div>
           <div class="font-bold">{{i + 1 + ". " + question.phrasing}}</div>
-          <div class="flex py-4">
+          <div class="flex flex-col md:flex-row py-4">
             @for (option of question.options; track option; let j = $index) {
             @if(option.correctAnswer) {
-            <div class="px-4 py-1 rounded bg-green-600 text-white">{{alphabet[j] + ") " + option.phrasing}}</div>
+            <div class="px-4 py-1 text-wrap rounded bg-green-600 text-white">{{alphabet[j] + ") " + option.phrasing}}
+            </div>
             } @else {
-            <div class="px-4 py-1">{{alphabet[j] + ") " + option.phrasing}}</div>
+            <div class="px-4 py-1 text-wrap">{{alphabet[j] + ") " + option.phrasing}}</div>
             }
             }
           </div>
