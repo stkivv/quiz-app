@@ -1,8 +1,10 @@
 <app-page-bg-small>
   <h1 class="text-black font-bold text-4xl m-10">LOG IN</h1>
   <div class="flex flex-col">
-    <app-form-input placeholder='Username' [formControl]="username"></app-form-input>
-    <app-form-input placeholder='Password' inputType='password' [formControl]="password"></app-form-input>
+    <form [formGroup]="loginForm">
+      <app-form-input formControlName="username" placeholder='Username' />
+      <app-form-input formControlName="password" placeholder='Password' type="password" />
+    </form>
   </div>
   <div class="flex flex-col">
     <app-button class="min-h-12 my-1" [btnType]='submitBtnType' [btnLabel]='submitBtnLabel' (click)='submitForm()' />

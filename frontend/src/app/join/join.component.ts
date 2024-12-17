@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormInputComponent } from '../form-input/form-input.component';
 import { ButtonComponent } from '../button/button.component';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EButtonType } from '../button/EButtonType';
 import { Router } from '@angular/router';
 import { WebsocketService } from '../websocket.service';
@@ -11,29 +11,42 @@ import { PageBgSmallComponent } from '../page-bg-small/page-bg-small.component';
 @Component({
   selector: 'app-join',
   standalone: true,
-  imports: [FormInputComponent, ButtonComponent, PageBgSmallComponent],
+  imports: [FormInputComponent, ButtonComponent, PageBgSmallComponent, ReactiveFormsModule],
   templateUrl: './join.component.html',
   styleUrl: './join.component.css',
   providers: [WebsocketService, GameService]
 })
 export class JoinComponent {
-  constructor(private router: Router, private gameService: GameService) { }
+  joinForm: FormGroup;
 
-  name = new FormControl('');
-  passcode = new FormControl('');
+  constructor(private router: Router, private gameService: GameService, private fb: FormBuilder) {
+    this.joinForm = this.fb.group({
+      name: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(20)
+      ]),
+      passcode: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(6)
+      ]),
+    })
+  }
 
   submitBtnType = EButtonType.CONFIRM;
   submitBtnLabel = "Join";
   handleJoin() {
-    if (!this.name.value || !this.passcode.value || this.passcode.value.length !== 6) return;
+    if (!this.joinForm.valid) return;
+    const passcode = this.joinForm.get('passcode')?.value;
+    const name = this.joinForm.get('name')?.value;
 
-    this.gameService.connectToWebsocket(this.passcode.value);
+    this.gameService.connectToWebsocket(passcode);
 
     this.gameService.subscribeToPlayerList(() => {
-      this.router.navigate([`${this.name.value}/waitingroom/${this.passcode.value}`]);
+      this.router.navigate([`${name}/waitingroom/${passcode}`]);
     });
 
-    this.gameService.joinGame(this.name.value);
+    this.gameService.joinGame(name);
   }
 
   cancelBtnType = EButtonType.CANCEL;

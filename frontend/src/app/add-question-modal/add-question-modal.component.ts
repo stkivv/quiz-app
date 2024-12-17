@@ -3,12 +3,12 @@ import { ButtonComponent } from '../button/button.component';
 import { EButtonType } from '../button/EButtonType';
 import { Question } from '../dtos/question-dto';
 import { FormInputComponent } from '../form-input/form-input.component';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-add-question-modal',
   standalone: true,
-  imports: [ButtonComponent, FormInputComponent],
+  imports: [ButtonComponent, FormInputComponent, ReactiveFormsModule],
   templateUrl: './add-question-modal.component.html',
   styleUrl: './add-question-modal.component.css'
 })
@@ -19,29 +19,32 @@ export class AddQuestionModalComponent {
 
   alphabet: string[] = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
-  phrasing = new FormControl("");
-  options = new FormArray([] as FormGroup[]);
-  handleAddOption() {
-    const ctrl = new FormGroup({ phrasing: new FormControl(""), correctAnswer: new FormControl(false) });
-    this.options.push(ctrl);
+  questionForm: FormGroup;
+
+  constructor(private fb: FormBuilder) {
+    this.questionForm = this.fb.group({
+      phrasing: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      options: this.fb.array([], [Validators.required, Validators.minLength(2)])
+    })
   }
-  getPhrasingControl(option: FormGroup) {
-    const phrasingControl = option.get('phrasing');
-    if (phrasingControl instanceof FormControl) {
-      return phrasingControl;
-    } else {
-      console.error("formGroup has the wrong format");
-      return;
-    }
+
+  get optionArray(): FormArray {
+    return this.questionForm.get('options') as FormArray;
+  }
+
+  handleAddOption() {
+    const option = new FormGroup({ phrasing: new FormControl(""), correctAnswer: new FormControl(false) });
+    this.optionArray.push(option);
   }
 
   addBtnType = EButtonType.CONFIRM;
   addBtnLabel = "Add";
   handleAdd() {
-    if (!this.phrasing.value || this.options.length < 2) return;
+    if (!this.questionForm.valid) return;
+
     const question: Question = {
-      phrasing: this.phrasing.value,
-      options: this.options.value
+      phrasing: this.questionForm.get('phrasing')?.value,
+      options: this.questionForm.get('options')?.value
     }
     this.add.emit(question);
     this.closeModal();
@@ -50,17 +53,17 @@ export class AddQuestionModalComponent {
   cancelBtnType = EButtonType.CANCEL;
   cancelBtnLabel = "Cancel";
   closeModal() {
-    this.phrasing = new FormControl("");
-    this.options = new FormArray([] as FormGroup[]);
+    this.questionForm.get('phrasing')?.setValue('');
+    this.optionArray.clear();
     this.isVisible = false;
     this.close.emit();
   }
 
   handleDeleteOption(index: number) {
-    this.options.removeAt(index);
+    this.optionArray.removeAt(index);
   }
 
   handleToggleOptionCorrect(index: number) {
-    this.options.value[index].correctAnswer = !this.options.value[index].correctAnswer;
+    this.optionArray.value[index].correctAnswer = !this.optionArray.value[index].correctAnswer;
   }
 }

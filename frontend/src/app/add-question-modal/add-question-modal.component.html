@@ -2,26 +2,33 @@
 <div class="fixed inset-0 flex overflow-scroll items-center justify-center bg-black bg-opacity-50">
   <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
     <h2 class="text-xl font-semibold mb-4">Add new question</h2>
-    <app-form-input placeholder="Write your question here" [formControl]="phrasing" />
-    <p class="font-semibold flex">Answers: </p>
-    @for(option of options.controls; track option; let i = $index) {
-    <div class="flex items-center">
-      <p class="mr-4 mb-2">{{alphabet[i] + ")"}}</p>
-      <app-form-input [formControl]="getPhrasingControl(option)!" class="flex-grow" />
-      @if (option.value.correctAnswer) {
-      <div class="bg-green-600 text-white hover:cursor-pointer hover:bg-green-500 p-1 mb-2 ml-2 w-20 rounded"
-        (click)="handleToggleOptionCorrect(i)">
-        Correct</div>
-      } @else {
-      <div class="bg-red-600 text-white hover:cursor-pointer hover:bg-red-500 p-1 mb-2 ml-2 w-20 rounded"
-        (click)="handleToggleOptionCorrect(i)">
-        Wrong</div>
-      }
-      <div class="bg-red-600 text-white hover:cursor-pointer hover:bg-red-500 p-1 mb-2 ml-2 w-10 font-bold rounded"
-        (click)="handleDeleteOption(i)">
-        X</div>
-    </div>
-    }
+    <form [formGroup]="questionForm">
+      <app-form-input placeholder="Write your question here" formControlName="phrasing" />
+      <p class="font-semibold flex">Answers: </p>
+      <div formArrayName="options">
+        @for(option of optionArray.controls; track option; let i = $index) {
+        <form [formGroupName]="i">
+          <div class="flex items-center">
+            <p class="mr-4 mb-2">{{alphabet[i] + ")"}}</p>
+            <app-form-input formControlName="phrasing" class="flex-grow" />
+            @if (option.value.correctAnswer) {
+            <div class="bg-green-600 text-white hover:cursor-pointer hover:bg-green-500 p-1 mb-2 ml-2 w-20 rounded"
+              (click)="handleToggleOptionCorrect(i)">
+              Correct</div>
+            } @else {
+            <div class="bg-red-600 text-white hover:cursor-pointer hover:bg-red-500 p-1 mb-2 ml-2 w-20 rounded"
+              (click)="handleToggleOptionCorrect(i)">
+              Wrong</div>
+            }
+            <div
+              class="bg-red-600 text-white hover:cursor-pointer hover:bg-red-500 p-1 mb-2 ml-2 w-10 font-bold rounded"
+              (click)="handleDeleteOption(i)">
+              X</div>
+          </div>
+        </form>
+        }
+      </div>
+    </form>
     <button class="flex bg-amber-400 hover:bg-amber-500 font-semibold rounded text-sm p-2 w-full my-2"
       (click)="handleAddOption()">Add new answer
       option

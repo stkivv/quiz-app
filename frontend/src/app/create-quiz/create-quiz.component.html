@@ -1,11 +1,13 @@
 <app-page-bg>
-  <div class="flex min-h-16 content-center">
-    <app-form-input class="font-bold flex-grow" placeholder="Add a title..." [formControl]="title" />
-    <div class="ml-4 w-44 h-12">
-      <app-button [btnType]="addQuestionBtnType" [btnLabel]="addQuestionLabel" (click)="showQuestionModal = true" />
+  <form [formGroup]="createForm">
+    <div class="flex min-h-16 content-center">
+      <app-form-input class="font-bold flex-grow" placeholder="Add a title..." formControlName="title" />
+      <div class="ml-4 w-44 h-12">
+        <app-button [btnType]="addQuestionBtnType" [btnLabel]="addQuestionLabel" (click)="showQuestionModal = true" />
+      </div>
     </div>
-  </div>
-  <app-form-input placeholder="Add description here..." [formControl]="description" />
+    <app-form-input placeholder="Add description here..." formControlName="description" />
+  </form>
   <app-add-question-modal [isVisible]="showQuestionModal" (close)="showQuestionModal = false"
     (add)="addQuestion($event)" />
   <div class=" my-2 w-full h-full overflow-scroll rounded">

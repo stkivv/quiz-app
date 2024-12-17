@@ -1,10 +1,11 @@
 <app-page-bg-small>
   <h1 class="text-black font-bold text-4xl m-10">SIGN UP</h1>
   <div class="flex flex-col">
-    <app-form-input placeholder='Username' [formControl]="username"></app-form-input>
-    <app-form-input placeholder='Password' inputType='password' [formControl]="password"></app-form-input>
-    <app-form-input placeholder='Confirm password' inputType='password'
-      [formControl]="confirmPassword"></app-form-input>
+    <form [formGroup]="registerForm">
+      <app-form-input placeholder='Username' formControlName="username" />
+      <app-form-input placeholder='Password' type='password' formControlName="password" />
+      <app-form-input placeholder='Confirm password' type='password' formControlName="confirmPassword" />
+    </form>
   </div>
   <div class="flex flex-col">
     <app-button class="min-h-12 my-1" [btnType]='submitBtnType' [btnLabel]='submitBtnLabel' (click)='submitForm()' />

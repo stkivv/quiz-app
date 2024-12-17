@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { EButtonType } from '../button/EButtonType';
 import { Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormInputComponent } from '../form-input/form-input.component';
 import { ButtonComponent } from '../button/button.component';
 import { BackendService } from '../backend.service';
@@ -11,15 +11,27 @@ import { PageBgSmallComponent } from '../page-bg-small/page-bg-small.component';
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormInputComponent, ButtonComponent, PageBgSmallComponent],
+  imports: [FormInputComponent, ButtonComponent, PageBgSmallComponent, ReactiveFormsModule],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css'
 })
 export class LoginPageComponent {
-  constructor(private backendService: BackendService, private router: Router) { }
+  loginForm: FormGroup;
 
-  username = new FormControl('');
-  password = new FormControl('');
+  constructor(private backendService: BackendService, private router: Router, private fb: FormBuilder) {
+    this.loginForm = this.fb.group({
+      username: new FormControl('', [
+        Validators.required,
+        Validators.minLength(4),
+        Validators.maxLength(20)
+      ]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(4),
+        Validators.maxLength(20)
+      ]),
+    })
+  }
 
   submitBtnType = EButtonType.CONFIRM;
   submitBtnLabel = "Log in";
@@ -31,11 +43,12 @@ export class LoginPageComponent {
   }
 
   submitForm() {
-    if (!this.username.value || !this.password.value) return;
+    if (!this.loginForm.valid) return;
+
     const url = "auth/login";
     const user: userDto = {
-      username: this.username.value,
-      password: this.password.value
+      username: this.loginForm.get('username')?.value,
+      password: this.loginForm.get('password')?.value
     }
     this.backendService.doPost<string>(url, user, "text").subscribe({
       next: (response: string) => {

@@ -6,14 +6,14 @@ import { AddQuestionModalComponent } from '../add-question-modal/add-question-mo
 import { Question } from '../dtos/question-dto';
 import { BackendService } from '../backend.service';
 import { Quiz } from '../dtos/quiz-dto';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormInputComponent } from '../form-input/form-input.component';
 import { PageBgComponent } from '../page-bg/page-bg.component';
 
 @Component({
   selector: 'app-create-quiz',
   standalone: true,
-  imports: [ButtonComponent, AddQuestionModalComponent, FormInputComponent, PageBgComponent],
+  imports: [ButtonComponent, AddQuestionModalComponent, FormInputComponent, PageBgComponent, ReactiveFormsModule],
   templateUrl: './create-quiz.component.html',
   styleUrl: './create-quiz.component.css'
 })
@@ -22,10 +22,18 @@ export class CreateQuizComponent {
   quizId: string | null = null;
   questions: Question[] = [];
   alphabet: string[] = 'abcdefghijklmnopqrstuvwxyz'.split('');
-  title = new FormControl("");
-  description = new FormControl("");
+  createForm: FormGroup;
 
-  constructor(private router: Router, private route: ActivatedRoute, private backendService: BackendService) { }
+  constructor(private router: Router, private route: ActivatedRoute, private backendService: BackendService, private fb: FormBuilder) {
+    this.createForm = this.fb.group({
+      title: new FormControl('', [
+        Validators.maxLength(30)
+      ]),
+      description: new FormControl('', [
+        Validators.maxLength(30)
+      ]),
+    })
+  }
 
   ngOnInit() {
     this.username = this.route.snapshot.paramMap.get('username')!;
@@ -34,8 +42,8 @@ export class CreateQuizComponent {
       const url = "quiz/" + id;
       this.backendService.doGet<Quiz>(url, 'json').subscribe(quiz => {
         this.quizId = quiz.id!;
-        this.title = new FormControl(quiz.title);
-        this.description = new FormControl(quiz.description);
+        this.createForm.get('title')?.setValue(quiz.title);
+        this.createForm.get('description')?.setValue(quiz.description);
         this.questions = quiz.questions;
       });
     }
@@ -66,12 +74,16 @@ export class CreateQuizComponent {
   saveQuizBtnType = EButtonType.CONFIRM;
   saveQuizLabel = "Save";
   submitForm() {
-    if (this.questions.length < 1) return;
+    if (!this.createForm.valid || this.questions.length < 1) return;
+
+    const title = this.createForm.get('title')?.value;
+    const description = this.createForm.get('description')?.value;
+
     const url = "quiz";
     const quiz: Quiz = {
       id: this.quizId ? this.quizId : "",
-      title: this.title.value ? this.title.value : "Untitled",
-      description: this.description.value ? this.description.value : "No description",
+      title: title ? title : "Untitled",
+      description: description ? description : "No description",
       publicQuiz: false,
       passCode: "",
       lastEdit: new Date(),
