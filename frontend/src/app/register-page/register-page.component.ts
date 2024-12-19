@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { userDto } from '../dtos/user-dto';
 import { FormInputComponent } from '../form-input/form-input.component';
 import { ButtonComponent } from '../button/button.component';
@@ -7,16 +7,26 @@ import { EButtonType } from '../button/EButtonType';
 import { Router } from '@angular/router';
 import { BackendService } from '../backend.service';
 import { PageBgSmallComponent } from '../page-bg-small/page-bg-small.component';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [FormInputComponent, ButtonComponent, PageBgSmallComponent, ReactiveFormsModule],
+  imports: [
+    FormInputComponent,
+    ButtonComponent,
+    PageBgSmallComponent,
+    ReactiveFormsModule,
+    NotificationComponent
+  ],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.css'
 })
 export class RegisterPageComponent {
   registerForm: FormGroup;
+  @ViewChild('error') errorNotification!: NotificationComponent;
+  @ViewChild('success') successNotification!: NotificationComponent;
+
   constructor(private backendService: BackendService, private router: Router, private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       username: new FormControl('', [
@@ -34,7 +44,15 @@ export class RegisterPageComponent {
         Validators.minLength(4),
         Validators.maxLength(20)
       ]),
-    })
+    });
+
+    this.registerForm.addValidators(this.passwordsMatchValidator)
+  }
+
+  passwordsMatchValidator(group: AbstractControl): { [key: string]: boolean } | null {
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { passwordsMismatch: true };
   }
 
   submitBtnType: EButtonType = EButtonType.CONFIRM;
@@ -47,7 +65,10 @@ export class RegisterPageComponent {
   }
 
   submitForm() {
-    if (!this.registerForm.valid) return;
+    if (!this.registerForm.valid) {
+      this.errorNotification.showMessage("Something went wrong. Please ensure both passwords are typed correctly.");
+      return;
+    }
 
     const url = "auth/register"
     const user: userDto = {
@@ -58,9 +79,10 @@ export class RegisterPageComponent {
     this.backendService.doPost(url, user, "text").subscribe({
       next: (response: any) => {
         console.log(response);
+        this.successNotification.showMessage("Account created!");
       },
       error: (error: any) => {
-        console.error("Error: ", error)
+        this.errorNotification.showMessage("Something went wrong. Username is possibly already taken.");
       }
     })
   }

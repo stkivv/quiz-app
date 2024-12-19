@@ -1,14 +1,20 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 import { EButtonType } from '../button/EButtonType';
 import { Question } from '../dtos/question-dto';
 import { FormInputComponent } from '../form-input/form-input.component';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'app-add-question-modal',
   standalone: true,
-  imports: [ButtonComponent, FormInputComponent, ReactiveFormsModule],
+  imports: [
+    ButtonComponent,
+    FormInputComponent,
+    ReactiveFormsModule,
+    NotificationComponent
+  ],
   templateUrl: './add-question-modal.component.html',
   styleUrl: './add-question-modal.component.css'
 })
@@ -21,11 +27,33 @@ export class AddQuestionModalComponent {
 
   questionForm: FormGroup;
 
+  @ViewChild(NotificationComponent) notification!: NotificationComponent;
+
   constructor(private fb: FormBuilder) {
     this.questionForm = this.fb.group({
-      phrasing: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      phrasing: new FormControl('', [Validators.required, Validators.maxLength(50)]),
       options: this.fb.array([], [Validators.required, Validators.minLength(2)])
     })
+
+    this.questionForm.setValidators(this.optionsValidator);
+  }
+
+  optionsValidator(group: AbstractControl): { [key: string]: boolean } | null {
+    const options = group.get('options') as FormArray;
+
+    if (!options || options.length < 2) {
+      return { insufficientOptions: true }
+    }
+
+    const correctAnswersCount = options.controls.filter(
+      (control) => control.get('correctAnswer')?.value === true
+    ).length;
+
+    if (correctAnswersCount !== 1) {
+      return { incorrectCorrectAnswerCount: true };
+    }
+
+    return null;
   }
 
   get optionArray(): FormArray {
@@ -33,14 +61,20 @@ export class AddQuestionModalComponent {
   }
 
   handleAddOption() {
-    const option = new FormGroup({ phrasing: new FormControl(""), correctAnswer: new FormControl(false) });
-    this.optionArray.push(option);
+    const optionGroup = this.fb.group({
+      phrasing: new FormControl('', [Validators.required, Validators.maxLength(30)]),
+      correctAnswer: new FormControl(false, [Validators.required])
+    })
+    this.optionArray.push(optionGroup);
   }
 
   addBtnType = EButtonType.CONFIRM;
   addBtnLabel = "Add";
   handleAdd() {
-    if (!this.questionForm.valid) return;
+    if (!this.questionForm.valid) {
+      this.notification.showMessage("Could not add the question. There can only be one right answer and there needs to be at least two answer options.");
+      return;
+    };
 
     const question: Question = {
       phrasing: this.questionForm.get('phrasing')?.value,
@@ -64,6 +98,8 @@ export class AddQuestionModalComponent {
   }
 
   handleToggleOptionCorrect(index: number) {
-    this.optionArray.value[index].correctAnswer = !this.optionArray.value[index].correctAnswer;
+    const optionControl = this.optionArray.at(index);
+    const currentValue = optionControl.get('correctAnswer')?.value;
+    optionControl.get('correctAnswer')?.setValue(!currentValue);
   }
 }

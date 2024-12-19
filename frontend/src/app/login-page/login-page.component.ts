@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { EButtonType } from '../button/EButtonType';
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,16 +7,24 @@ import { ButtonComponent } from '../button/button.component';
 import { BackendService } from '../backend.service';
 import { userDto } from '../dtos/user-dto';
 import { PageBgSmallComponent } from '../page-bg-small/page-bg-small.component';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormInputComponent, ButtonComponent, PageBgSmallComponent, ReactiveFormsModule],
+  imports: [
+    FormInputComponent,
+    ButtonComponent,
+    PageBgSmallComponent,
+    ReactiveFormsModule,
+    NotificationComponent
+  ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css'
 })
 export class LoginPageComponent {
   loginForm: FormGroup;
+  @ViewChild(NotificationComponent) notification!: NotificationComponent;
 
   constructor(private backendService: BackendService, private router: Router, private fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -43,7 +51,10 @@ export class LoginPageComponent {
   }
 
   submitForm() {
-    if (!this.loginForm.valid) return;
+    if (!this.loginForm.valid) {
+      this.notification.showMessage("Username or password are incorrect");
+      return;
+    };
 
     const url = "auth/login";
     const user: userDto = {
@@ -56,7 +67,7 @@ export class LoginPageComponent {
         this.router.navigate([`${user.username}/dashboard`])
       },
       error: (error: any) => {
-        console.error("Error: ", error)
+        this.notification.showMessage("Username or password are incorrect");
       }
     });
   }

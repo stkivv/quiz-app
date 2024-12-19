@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 import { EButtonType } from '../button/EButtonType';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,11 +9,19 @@ import { Quiz } from '../dtos/quiz-dto';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormInputComponent } from '../form-input/form-input.component';
 import { PageBgComponent } from '../page-bg/page-bg.component';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'app-create-quiz',
   standalone: true,
-  imports: [ButtonComponent, AddQuestionModalComponent, FormInputComponent, PageBgComponent, ReactiveFormsModule],
+  imports: [
+    ButtonComponent,
+    AddQuestionModalComponent,
+    FormInputComponent,
+    PageBgComponent,
+    ReactiveFormsModule,
+    NotificationComponent
+  ],
   templateUrl: './create-quiz.component.html',
   styleUrl: './create-quiz.component.css'
 })
@@ -23,6 +31,7 @@ export class CreateQuizComponent {
   questions: Question[] = [];
   alphabet: string[] = 'abcdefghijklmnopqrstuvwxyz'.split('');
   createForm: FormGroup;
+  @ViewChild(NotificationComponent) notification!: NotificationComponent;
 
   constructor(private router: Router, private route: ActivatedRoute, private backendService: BackendService, private fb: FormBuilder) {
     this.createForm = this.fb.group({
@@ -74,7 +83,10 @@ export class CreateQuizComponent {
   saveQuizBtnType = EButtonType.CONFIRM;
   saveQuizLabel = "Save";
   submitForm() {
-    if (!this.createForm.valid || this.questions.length < 1) return;
+    if (!this.createForm.valid || this.questions.length < 1) {
+      this.notification.showMessage("unable to create quiz");
+      return;
+    }
 
     const title = this.createForm.get('title')?.value;
     const description = this.createForm.get('description')?.value;
@@ -96,7 +108,7 @@ export class CreateQuizComponent {
         this.router.navigate([`${this.username}/dashboard`]);
       },
       error: (error: any) => {
-        console.error("Error: ", error)
+        this.notification.showMessage("unable to create quiz");
       }
     });
   }

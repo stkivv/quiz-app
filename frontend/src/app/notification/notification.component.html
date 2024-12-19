@@ -1,0 +1,21 @@
+@if(visible) {
+<div class="inset-0 absolute pointer-events-none z-10">
+  <div [ngClass]="{'bg-red-700' : type == 'error', 'bg-green-600' : type == 'success'}"
+    class="text-white mt-2 mx-auto w-64 p-3 rounded-md pointer-events-auto">
+    <div class="font-bold flex justify-between">
+      @if(type == 'error') {
+      <div>
+        Error:
+      </div>
+      }
+      @if(type == 'success') {
+      <div>
+        Success:
+      </div>
+      }
+      <button class="text-gray-800" (click)=hide()>X</button>
+    </div>
+    {{message}}
+  </div>
+</div>
+}
