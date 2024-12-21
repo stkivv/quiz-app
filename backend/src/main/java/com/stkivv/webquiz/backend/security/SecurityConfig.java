@@ -1,26 +1,31 @@
 package com.stkivv.webquiz.backend.security;
 
-import java.util.Arrays;
+import java.util.function.Supplier;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
+import org.springframework.util.StringUtils;
 
 import com.stkivv.webquiz.backend.Services.CustomUserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -35,31 +40,27 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
+	public CsrfTokenRepository csrfTokenRepository() {
+		CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+		repository.setCookiePath("/");
+		return repository;
+	}
+
+	@Bean
+	public SecurityFilterChain applicationSecurityProd(HttpSecurity http) throws Exception {
 		return http
-				.csrf(AbstractHttpConfigurer::disable)
-				.cors(Customizer.withDefaults())
+				.csrf((csrf) -> csrf
+						.csrfTokenRepository(csrfTokenRepository())
+						.csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
 				.authorizeHttpRequests((authorize) -> authorize
-						.requestMatchers("/auth/login", "/auth/register", "/auth/refresh", "/ws/**").permitAll()
+						.requestMatchers("/auth/login", "/auth/register", "/auth/refresh", "/ws/**", "/csrf")
+						.permitAll()
 						.anyRequest().authenticated())
 				.sessionManagement((session) -> session
 						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterBefore(jwtAuthenticationFilter,
 						UsernamePasswordAuthenticationFilter.class)
 				.build();
-	}
-
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-		configuration.setAllowCredentials(true);
-
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
 	}
 
 	@Bean
@@ -77,5 +78,23 @@ public class SecurityConfig {
 		auth
 				.userDetailsService(userDetailsService)
 				.passwordEncoder(passwordEncoder());
+	}
+}
+
+// https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html
+final class SpaCsrfTokenRequestHandler implements CsrfTokenRequestHandler {
+	private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
+	private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
+
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
+		this.xor.handle(request, response, csrfToken);
+		csrfToken.get();
+	}
+
+	@Override
+	public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
+		String headerValue = request.getHeader(csrfToken.getHeaderName());
+		return (StringUtils.hasText(headerValue) ? this.plain : this.xor).resolveCsrfTokenValue(request, csrfToken);
 	}
 }

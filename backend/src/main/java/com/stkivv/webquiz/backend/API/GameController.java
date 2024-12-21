@@ -7,16 +7,12 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.stkivv.webquiz.backend.DTO.AnswerDto;
 import com.stkivv.webquiz.backend.DTO.GameSessionDto;
 import com.stkivv.webquiz.backend.DTO.PlayerDto;
@@ -45,7 +41,11 @@ public class GameController {
 		GameSessionDto session = new GameSessionDto();
 		session.setQuestions(quiz.getQuestions());
 		session.setPlayers(new ArrayList<>());
+
 		String passCode = generatePassCode();
+		while (gameSessions.containsKey(passCode)) {
+			passCode = generatePassCode();
+		}
 		gameSessions.put(passCode, session);
 
 		return passCode;
@@ -148,14 +148,14 @@ public class GameController {
 		return true;
 	}
 
-	// Generates a random 6 digit alphanumeric string that will be used to access
+	// Generates a random 4 digit alphanumeric string that will be used to access
 	// the game
 	private String generatePassCode() {
 		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 		StringBuilder result = new StringBuilder();
 		Random random = new Random();
 
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 4; i++) {
 			int index = random.nextInt(chars.length());
 			result.append(chars.charAt(index));
 		}

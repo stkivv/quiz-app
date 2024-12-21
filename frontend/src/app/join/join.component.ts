@@ -35,8 +35,8 @@ export class JoinComponent {
       ]),
       passcode: new FormControl('', [
         Validators.required,
-        Validators.minLength(6),
-        Validators.maxLength(6)
+        Validators.minLength(4),
+        Validators.maxLength(4)
       ]),
     })
   }
@@ -45,7 +45,7 @@ export class JoinComponent {
   submitBtnLabel = "Join";
   handleJoin() {
     if (!this.joinForm.valid) {
-      this.notification.showMessage("Unable to join. Name cannot be longer than 20 characters and the passcode must be exactly 6 characters.")
+      this.notification.showMessage("Unable to join. Name cannot be longer than 20 characters and the passcode must be exactly 4 characters.")
       return;
     };
     const passcode = this.joinForm.get('passcode')?.value;

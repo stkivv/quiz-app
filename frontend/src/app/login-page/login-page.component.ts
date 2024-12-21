@@ -52,7 +52,7 @@ export class LoginPageComponent {
 
   submitForm() {
     if (!this.loginForm.valid) {
-      this.notification.showMessage("Username or password are incorrect");
+      this.notification.showMessage("Cannot log in. Username or password is possibly incorrect");
       return;
     };
 
@@ -67,7 +67,7 @@ export class LoginPageComponent {
         this.router.navigate([`${user.username}/dashboard`])
       },
       error: (error: any) => {
-        this.notification.showMessage("Username or password are incorrect");
+        this.notification.showMessage("Cannot log in. Username or password is possibly incorrect");
       }
     });
   }

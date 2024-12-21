@@ -14,8 +14,9 @@ export class WebsocketService {
   }
 
   private initializeWebSocket() {
+    const url = window.location.origin + '/' + environment.websocketUrl;
     this.client = new Client({
-      brokerURL: environment.websocketUrl,
+      brokerURL: url,
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
