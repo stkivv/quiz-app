@@ -1,6 +1,6 @@
 <app-page-bg>
   <div class="flex flex-col md:flex-row mb-6 min-h-16">
-    <div class="text-black text-left font-bold text-4xl m-1 size-fit flex-grow">Dashboard</div>
+    <div class="text-black text-left font-bold text-4xl m-1 size-fit flex-grow fancy-font">Dashboard</div>
     <div class="flex flex-row">
       <p class="font-bold p-4">Logged in as: {{username}}</p>
       <div class="my-2 w-20">
@@ -8,12 +8,12 @@
       </div>
     </div>
   </div>
-  <div class="overflow-y-scroll h-full">
+  <div class="overflow-y-auto h-full">
     <div class="flex my-4 flex-col">
       <app-button class="w-36 mb-4 h-10" [btnType]="newQuizBtnType" [btnLabel]="newQuizBtnLabel"
         (click)='handleNewQuiz()' />
       @for(quiz of quizzes; track quiz.title) {
-      <div class="bg-white p-4 flex flex-col md:flex-row my-1 w-full  border-amber-500 border rounded ">
+      <div class="bg-white p-4 flex flex-col md:flex-row my-1 w-full  border-blue-500 border rounded ">
         <div class="flex flex-col flex-grow">
           <div class="text-left font-bold">{{quiz.title}}</div>
           <div class="text-sm text-left">Description: {{quiz.description}}</div>

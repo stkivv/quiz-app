@@ -15,11 +15,11 @@
 }
 
 .menu-btn {
-  background-color: orange;
+  background-color: #4287f5;
 }
 
 .menu-btn:hover {
-  background-color: #ff9808;
+  background-color: #3899ff;
 }
 
 .danger-btn {

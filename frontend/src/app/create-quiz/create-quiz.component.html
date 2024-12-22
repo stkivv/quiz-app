@@ -11,7 +11,7 @@
   </form>
   <app-add-question-modal [isVisible]="showQuestionModal" (close)="showQuestionModal = false"
     (add)="addQuestion($event)" />
-  <div class=" my-2 w-full h-full overflow-scroll rounded">
+  <div class=" my-2 w-full h-full overflow-auto rounded">
     <div class="text-left font-bold my-2">Questions:</div>
     @for (question of questions; track question; let i = $index) {
     <div class="text-left overflow-hidden border border-black content-center p-4 bg-white rounded my-2">

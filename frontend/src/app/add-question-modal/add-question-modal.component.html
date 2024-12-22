@@ -1,6 +1,6 @@
 <app-notification />
 @if (isVisible) {
-<div class="fixed inset-0 flex overflow-scroll items-center justify-center bg-black bg-opacity-50">
+<div class="fixed inset-0 flex overflow-auto items-center justify-center bg-black bg-opacity-50">
   <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
     <h2 class="text-xl font-semibold mb-4">Add new question</h2>
     <form [formGroup]="questionForm">
@@ -30,7 +30,7 @@
         }
       </div>
     </form>
-    <button class="flex bg-amber-400 hover:bg-amber-500 font-semibold rounded text-sm p-2 w-full my-2"
+    <button class="flex bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded text-sm p-2 w-full my-2"
       (click)="handleAddOption()">Add new answer
       option
       +</button>
