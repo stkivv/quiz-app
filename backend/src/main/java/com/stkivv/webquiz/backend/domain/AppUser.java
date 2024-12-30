@@ -16,7 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Size;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -28,18 +27,15 @@ public class AppUser implements UserDetails {
 	private UUID userId;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "appUser")
-	@Size(max = 400)
 	private List<Quiz> quizzes;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "appUser")
 	private List<RefreshToken> refreshTokens;
 
 	@Column(nullable = false)
-	@Size(min = 4, max = 30)
 	private String username;
 
 	@Column(nullable = false)
-	@Size(min = 7, max = 30)
 	private String password;
 
 	private boolean isEnabled;

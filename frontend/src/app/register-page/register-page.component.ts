@@ -82,6 +82,7 @@ export class RegisterPageComponent {
         this.successNotification.showMessage("Account created!");
       },
       error: (error: any) => {
+        console.error(error);
         this.errorNotification.showMessage("Something went wrong. Username is possibly already taken.");
       }
     })

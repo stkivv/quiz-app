@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { BackendService } from "./backend.service";
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import { catchError, Observable, switchMap, throwError } from "rxjs";
+import { catchError, Observable, switchMap } from "rxjs";
 import { Router } from "@angular/router";
+import { environment } from "../environments/environment";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -13,6 +14,9 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError(error => {
+        if (req.url == environment.apiUrl + "auth/register" ||
+          req.url == environment.apiUrl + "csrf") throw error;
+
         if (error.status === 403 && !this.isRefreshing) {
           this.isRefreshing = true;
           return this.backendService.doPost("auth/refresh", {}, "text").pipe(

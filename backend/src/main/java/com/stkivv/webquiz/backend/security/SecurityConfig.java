@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -34,7 +35,9 @@ public class SecurityConfig {
 	private final CustomUserService userDetailsService;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-	public SecurityConfig(CustomUserService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+	public SecurityConfig(CustomUserService userDetailsService,
+			JwtAuthenticationFilter jwtAuthenticationFilter,
+			Environment env) {
 		this.userDetailsService = userDetailsService;
 		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
 	}
