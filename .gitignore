@@ -185,3 +185,7 @@ build/
 
 ### env ###
 **/.env
+
+
+### certs (local testing with self signed SSL/TLS certificates) ###
+/certs

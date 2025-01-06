@@ -80,6 +80,14 @@ export class RegisterPageComponent {
       next: (response: any) => {
         console.log(response);
         this.successNotification.showMessage("Account created!");
+
+        // after succesfully registering, attempt log in
+        const loginUrl = "auth/login"
+        this.backendService.doPost(loginUrl, user, "text").subscribe({
+          next: () => {
+            this.router.navigate([`${user.username}/dashboard`])
+          }
+        });
       },
       error: (error: any) => {
         console.error(error);
